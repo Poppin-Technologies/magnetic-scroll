@@ -15,11 +15,9 @@ struct ContentView: View {
         Block {
           Text("Auto-fit height view")
         }
-        .border(.red)
         Block(height: 100.0) {
           Text("Set height view")
         }
-        .border(.green)
       }
     }
   }
