@@ -16,10 +16,12 @@ public struct MagneticScrollView: View {
   
   public var body: some View {
     GeometryReader { proxy in
-      // TODO: Implement block display
-      VStack {
-        ForEach(blocks) { block in
-          block
+      ScrollView {
+        // TODO: Implement block display
+        VStack {
+          ForEach(blocks) { block in
+            block
+          }
         }
       }
     }

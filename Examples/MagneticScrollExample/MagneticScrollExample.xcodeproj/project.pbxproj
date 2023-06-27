@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE447A7C2A4B5C6600491BCA /* MagneticScroll in Frameworks */ = {isa = PBXBuildFile; productRef = EE447A7B2A4B5C6600491BCA /* MagneticScroll */; };
 		EE92D1F22A4B5850007A0574 /* MagneticScrollExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92D1F12A4B5850007A0574 /* MagneticScrollExampleApp.swift */; };
 		EE92D1F42A4B5850007A0574 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92D1F32A4B5850007A0574 /* ContentView.swift */; };
 		EE92D1F62A4B5851007A0574 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE92D1F52A4B5851007A0574 /* Assets.xcassets */; };
@@ -28,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE447A7C2A4B5C6600491BCA /* MagneticScroll in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,12 +44,20 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		EE447A7A2A4B5C6600491BCA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		EE92D1E52A4B5850007A0574 = {
 			isa = PBXGroup;
 			children = (
 				EE447A782A4B5B4800491BCA /* Packages */,
 				EE92D1F02A4B5850007A0574 /* MagneticScrollExample */,
 				EE92D1EF2A4B5850007A0574 /* Products */,
+				EE447A7A2A4B5C6600491BCA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -95,6 +105,9 @@
 			dependencies = (
 			);
 			name = MagneticScrollExample;
+			packageProductDependencies = (
+				EE447A7B2A4B5C6600491BCA /* MagneticScroll */,
+			);
 			productName = MagneticScrollExample;
 			productReference = EE92D1EE2A4B5850007A0574 /* MagneticScrollExample.app */;
 			productType = "com.apple.product-type.application";
@@ -364,6 +377,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE447A7B2A4B5C6600491BCA /* MagneticScroll */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagneticScroll;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EE92D1E62A4B5850007A0574 /* Project object */;
 }

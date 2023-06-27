@@ -14,12 +14,12 @@ struct ContentView: View {
       MagneticScrollView {
         Block {
           Text("Auto-fit height view")
-            .border(.red)
         }
+        .border(.red)
         Block(height: 100.0) {
           Text("Set height view")
-            .border(.green)
         }
+        .border(.green)
       }
     }
   }
