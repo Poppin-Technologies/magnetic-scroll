@@ -1,2 +1,3 @@
 # MagneticScroll
-A ScrollView with magical powers
+
+A description of this package.
