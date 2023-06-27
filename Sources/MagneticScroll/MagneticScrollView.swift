@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(iOS 14.0, *)
 public struct MagneticScrollView: View {
   
   /// The blocks to display.

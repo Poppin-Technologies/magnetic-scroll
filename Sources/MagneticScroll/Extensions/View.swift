@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(iOS 14.0, *)
 extension View {
   func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
     background(
