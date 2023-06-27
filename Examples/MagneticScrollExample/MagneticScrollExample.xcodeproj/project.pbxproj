@@ -14,6 +14,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EE447A792A4B5B4800491BCA /* magnetic-scroll */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "magnetic-scroll"; path = ../..; sourceTree = "<group>"; };
 		EE92D1EE2A4B5850007A0574 /* MagneticScrollExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagneticScrollExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE92D1F12A4B5850007A0574 /* MagneticScrollExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagneticScrollExampleApp.swift; sourceTree = "<group>"; };
 		EE92D1F32A4B5850007A0574 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -33,9 +34,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EE447A782A4B5B4800491BCA /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				EE447A792A4B5B4800491BCA /* magnetic-scroll */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		EE92D1E52A4B5850007A0574 = {
 			isa = PBXGroup;
 			children = (
+				EE447A782A4B5B4800491BCA /* Packages */,
 				EE92D1F02A4B5850007A0574 /* MagneticScrollExample */,
 				EE92D1EF2A4B5850007A0574 /* Products */,
 			);

@@ -6,21 +6,27 @@
 //
 
 import SwiftUI
+import MagneticScroll
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+  var body: some View {
+    VStack {
+      MagneticScrollView {
+        Block {
+          Text("Auto-fit height view")
+            .border(.red)
         }
-        .padding()
+        Block(height: 100.0) {
+          Text("Set height view")
+            .border(.green)
+        }
+      }
     }
+  }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  static var previews: some View {
+    ContentView()
+  }
 }
