@@ -13,25 +13,24 @@ import SwiftUI
  ``MagneticScrollView`` displays a vertical stack of blocks.
  */
 @available(iOS 14.0, *)
-public struct Block: View, Identifiable {
-  
+public struct BlockView: View, MagneticBlock {
   // MARK: - State
   
   /// The height of this block.
   /// This value is used to calculate where the block is positioned in the scroll view.
-  @State private var height: CGFloat = .zero
-  
+  @State private var height: CGFloat
   // MARK: - Properties
   
   /// The ID of this block.
   /// The underlying `body` property attaches to this ID.
-  public var id: UUID
+  public var id: AnyHashable?
+  
   /// The content to display.
   /// This is a type-erased view.
   var content: AnyView
   
-  // MARK: - Views
   
+  // MARK: - Views
   public var body: some View {
     VStack {
       content
@@ -40,16 +39,24 @@ public struct Block: View, Identifiable {
           self.height = size.height
         }
     }
-    .frame(maxWidth: .infinity, maxHeight: height)
+    .frame(maxWidth: .infinity)
+    .frame(height: height)
     .id(id)
   }
   
   // MARK: - Initalizers
   
-  public init(height: CGFloat = .zero, @ViewBuilder body: () -> some View) {
+  public init(block: Block, @ViewBuilder body: () -> some View) {
     let body = body()
     self.content = AnyView(body)
     self.id = UUID()
-    self.height = height
+    self.height = block.height
   }
+}
+
+
+public struct Block: MagneticBlock {
+  public var id: AnyHashable?
+  public var height: CGFloat
+  public var spacing: CGFloat = 20
 }

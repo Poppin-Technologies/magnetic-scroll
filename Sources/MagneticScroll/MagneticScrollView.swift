@@ -11,7 +11,7 @@ import SwiftUI
 public struct MagneticScrollView: View {
   
   /// The blocks to display.
-  var blocks: [Block]
+  @BlocksBuilder public var tuple: BlocksTupleView
   
   // MARK: - Views
   
@@ -20,8 +20,8 @@ public struct MagneticScrollView: View {
       ScrollView {
         // TODO: Implement block display
         VStack {
-          ForEach(blocks) { block in
-            block
+          ForEach(tuple.blocks, id: \.id) { block in
+            BlockWrapperView(magneticBlock: block)
           }
         }
       }
@@ -30,7 +30,30 @@ public struct MagneticScrollView: View {
   
   // MARK: - Initalizers
   
-  public init(@BlocksBuilder blocks: () -> [Block]) {
-    self.blocks = blocks()
+  public init(@BlocksBuilder blocks: () -> BlocksTupleView) {
+    self.tuple = blocks()
+  }
+}
+
+public struct BlocksTupleView: MagneticBlock {
+    public var id: AnyHashable?
+    public var blocks: [MagneticBlock]
+}
+
+@available(iOS 14.0, *)
+struct BlockWrapperView: View {
+  var magneticBlock: MagneticBlock
+  
+  var body: some View {
+    Group {
+      switch magneticBlock {
+      case let block as Block:
+        BlockView(block: block) {
+          Text("Hello World")
+        }
+      default:
+        EmptyView()
+      }
+    }
   }
 }

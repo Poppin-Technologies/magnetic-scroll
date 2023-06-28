@@ -11,19 +11,19 @@ import SwiftUI
 @resultBuilder
 public struct BlocksBuilder {
   
-  public static func buildBlock(_ parts: Block...) -> [Block] {
+  public static func buildBlock(_ parts: MagneticBlock...) -> [MagneticBlock] {
     return parts
   }
   
-  static func buildEither(first component: Block) -> [Block] {
+  static func buildEither(first component: MagneticBlock) -> [MagneticBlock] {
     return [component]
   }
   
-  static func buildEither(second component: Block) -> [Block] {
+  static func buildEither(second component: MagneticBlock) -> [MagneticBlock] {
     return [component]
   }
   
-  static func buildArray(_ components: [Block]) -> [Block] {
+  static func buildArray(_ components: [MagneticBlock]) -> [MagneticBlock] {
     return components
   }
 }
