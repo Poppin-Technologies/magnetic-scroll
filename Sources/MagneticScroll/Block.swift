@@ -13,11 +13,13 @@ import SwiftUI
  ``MagneticScrollView`` displays a vertical stack of blocks.
  */
 public struct BlockView: View, MagneticBlock {
+  
   // MARK: - State
   
   /// The height of this block.
   /// This value is used to calculate where the block is positioned in the scroll view.
   @State private var height: CGFloat
+  
   // MARK: - Properties
   
   /// The ID of this block.
@@ -28,8 +30,8 @@ public struct BlockView: View, MagneticBlock {
   /// This is a type-erased view.
   var content: AnyView
   
-  
   // MARK: - Views
+  
   public var body: some View {
     VStack {
       content
