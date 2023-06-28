@@ -12,7 +12,6 @@ import SwiftUI
  
  ``MagneticScrollView`` displays a vertical stack of blocks.
  */
-@available(iOS 14.0, *)
 public struct BlockView: View, MagneticBlock {
   // MARK: - State
   
