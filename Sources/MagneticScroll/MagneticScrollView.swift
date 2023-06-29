@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 @available(iOS 14.0, *)
 public struct MagneticScrollView<Content>: View where Content: View {
@@ -16,7 +17,7 @@ public struct MagneticScrollView<Content>: View where Content: View {
   
   public var body: some View {
     GeometryReader { proxy in
-      ScrollView {
+      OffsetObservingScrollView(offset: $organizer.scrollViewOffset) {
         // TODO: Implement block display
         VStack {
           content

@@ -5,6 +5,7 @@
 //  Created by Demirhan Mehmet Atabey on 29.06.2023.
 //
 
+import CoreGraphics
 import Combine
 import OrderedCollections
 
@@ -12,7 +13,11 @@ import OrderedCollections
 @available(iOS 14.0, *)
 internal class Organizer: ObservableObject {
   @Published var blocks = OrderedSet<MagneticBlock>()
-  var cancellables = Set<AnyCancellable>()
+  @Published var scrollViewOffset: CGPoint = .zero
+  @Published var activeBlock : MagneticBlock = .init(height: 0)
+  
+  // MARK: - Private variables
+  private var cancellables = Set<AnyCancellable>()
   
   func feed(with block: MagneticBlock) {
     blocks.updateOrInsert(block, at: 0)
@@ -24,10 +29,19 @@ internal class Organizer: ObservableObject {
       print("Block changed: \(newValue)")
     }
     .store(in: &cancellables)
+    
+    $scrollViewOffset.sink { scrollviewOffset in
+      print("scrollviewOffset has changed: \(scrollviewOffset)")
+      self.checkIfBlockShouldBeActivated()
+    }
+    .store(in: &cancellables)
   }
-  
   
   func update(block: MagneticBlock) {
     blocks.updateOrAppend(block)
+  }
+  
+  func checkIfBlockShouldBeActivated() {
+    
   }
 }

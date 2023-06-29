@@ -8,7 +8,7 @@
 import SwiftUI
 
 @available(iOS 14.0, *)
-struct MagneticBlock: Identifiable {
+internal struct MagneticBlock: Identifiable {
   var id: AnyHashable?
   var height: CGFloat
 }
@@ -24,5 +24,11 @@ extension MagneticBlock: Equatable {
 extension MagneticBlock: Hashable {
   func hash(into hasher: inout Hasher) {
     hasher.combine(id)
+  }
+}
+
+extension MagneticBlock {
+  static var EmptyBlock: MagneticBlock {
+    return .init(height: 0)
   }
 }

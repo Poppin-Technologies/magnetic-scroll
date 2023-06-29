@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 /**
  A magnetic scroll block.
@@ -62,6 +63,8 @@ public struct Block<Content>: View where Content: View {
             }
         }
         .frame(height: height)
+        .background(Color.red)
+        .frame(maxWidth: .infinity)
       }
     }
     .animation(.spring(), value: height)
