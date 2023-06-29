@@ -8,52 +8,27 @@
 import SwiftUI
 
 @available(iOS 14.0, *)
-public struct MagneticScrollView: View {
-  
-  /// The blocks to display.
-  @BlocksBuilder public var tuple: BlocksTupleView
+public struct MagneticScrollView<Content>: View where Content: View {
+  @StateObject private var organizer = Organizer()
   
   // MARK: - Views
+  private var content: Content
   
   public var body: some View {
     GeometryReader { proxy in
       ScrollView {
         // TODO: Implement block display
         VStack {
-          ForEach(tuple.blocks, id: \.id) { block in
-            BlockWrapperView(magneticBlock: block)
-          }
+          content
         }
       }
     }
+    .environmentObject(organizer)
   }
   
   // MARK: - Initalizers
   
-  public init(@BlocksBuilder blocks: () -> BlocksTupleView) {
-    self.tuple = blocks()
-  }
-}
-
-public struct BlocksTupleView: MagneticBlock {
-    public var id: AnyHashable?
-    public var blocks: [MagneticBlock]
-}
-
-@available(iOS 14.0, *)
-struct BlockWrapperView: View {
-  var magneticBlock: MagneticBlock
-  
-  var body: some View {
-    Group {
-      switch magneticBlock {
-      case let block as Block:
-        BlockView(block: block) {
-          Text("Hello World")
-        }
-      default:
-        EmptyView()
-      }
-    }
+  public init(@ViewBuilder body: @escaping () -> Content) {
+    self.content = body()
   }
 }
