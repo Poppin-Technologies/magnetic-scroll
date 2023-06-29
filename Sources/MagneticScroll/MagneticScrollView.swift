@@ -15,6 +15,7 @@ public struct MagneticScrollView<Content>: View where Content: View {
   // MARK: - Properties
   var spacing: CGFloat = 8
   
+  
   // MARK: - Views
   private var content: Content
   

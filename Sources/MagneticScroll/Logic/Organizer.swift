@@ -30,7 +30,7 @@ internal class Organizer: ObservableObject {
   /// For testing, should be deleted when releasing
   init(spacing: CGFloat) {
     self.spacing = spacing
-    
+    setupPublishers()
     $blocks.sink { newValue in
 //      print("Block changed: \(newValue)")
     }
@@ -46,7 +46,7 @@ internal class Organizer: ObservableObject {
   func setupPublishers() {
     $activeBlock.sink { [weak self] block in
       if let block {
-        self?.activatedOffset += block.height
+        self?.activatedOffset += (block.height)
       }
     }
     .store(in: &cancellables)
@@ -76,10 +76,12 @@ internal class Organizer: ObservableObject {
     else {
       nextBlock = blocks[blockIndex + 1]
     }
-        
+    print("ScrollViewOffest", self.scrollViewOffset.y)
+    print("ActivatedOffset", activatedOffset)
     let nonActivatedOffset = self.scrollViewOffset.y - (activatedOffset + spacing)
-    
-    if nonActivatedOffset > (activeBlock!.height / 2) {
+    print("NonactivatedOffset", nonActivatedOffset)
+
+    if nonActivatedOffset > 0 {
       activeBlock = nextBlock
     }
     
