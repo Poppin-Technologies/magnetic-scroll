@@ -63,7 +63,7 @@ public struct Block<Content>: View where Content: View {
             }
         }
         .frame(height: height)
-        .background(Color.red)
+        .background(organizer.activeBlock?.id == id ? Color.green : Color.red)
         .frame(maxWidth: .infinity)
       }
     }
@@ -98,4 +98,8 @@ public struct Block<Content>: View where Content: View {
     
     self.height = height.wrappedValue
   }
+}
+
+public extension Block {
+  typealias ID = AnyHashable?
 }
