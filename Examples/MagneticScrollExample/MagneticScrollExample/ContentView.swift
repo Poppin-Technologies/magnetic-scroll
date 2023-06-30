@@ -9,35 +9,48 @@ import SwiftUI
 import MagneticScroll
 
 struct ContentView: View {
+  @State private var activeBlock : Block.ID = "First"
+  
   var body: some View {
     VStack {
-      MagneticScrollView(spacing: 12.0) {
-        Text("Hello World")
-          .frame(maxWidth: .infinity)
-          .frame(height: 100.0)
-          .background(Color.red)
-        Text("My name is Ben")
-          .frame(maxWidth: .infinity)
-          .frame(height: 200.0)
-          .background(Color.yellow)
-        Text("Hello World")
-          .frame(maxWidth: .infinity)
-          .frame(height: 300.0)
-          .background(Color.red)
-        Text("My name is Ben")
-          .frame(maxWidth: .infinity)
-          .frame(height: 400.0)
-          .background(Color.yellow)
-        Text("Hello World")
-          .frame(maxWidth: .infinity)
-          .frame(height: 300.0)
-          .background(Color.red)
-        Text("My name is Ben")
-          .frame(maxWidth: .infinity)
-          .frame(height: 400.0)
-          .background(Color.yellow)
+      ScrollViewReader { proxy in
+        MagneticScrollView(activeBlock: $activeBlock) {
+          Block(id: "scroll field") {
+            Button("Scroll To Bottom") {
+              activeBlock = "Fifth"
+            }
+            .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+          }
+          Block(id: "First") {
+            Text("First Block")
+            .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+          }
+          Block(id: "Second") {
+            Text("Second Block")
+            .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+          }
+          Block(id: "Third") {
+            Text("Third Block")
+              .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+          }
+          
+          Block(id: "Fourth") {
+            Text("Fourth Block")
+              .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+          }
+          
+          Block(id: "Fifth") {
+            Button("Top") {
+              activeBlock = "scroll field"
+            }.frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+          }
+        }
       }
     }
+  }
+  
+  func viewBounds() -> CGRect {
+    return UIScreen.main.bounds
   }
 }
 
