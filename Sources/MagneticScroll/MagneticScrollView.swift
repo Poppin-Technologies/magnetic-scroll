@@ -6,31 +6,37 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 @available(iOS 14.0, *)
-public struct MagneticScrollView: View {
+public struct MagneticScrollView<Content>: View where Content: View {
+  @StateObject private var organizer : Organizer
   
-  /// The blocks to display.
-  var blocks: [Block]
+  // MARK: - Properties
+  var spacing: CGFloat = 8
+  
   
   // MARK: - Views
+  private var content: Content
   
   public var body: some View {
     GeometryReader { proxy in
-      ScrollView {
+      OffsetObservingScrollView(offset: $organizer.scrollViewOffset) {
         // TODO: Implement block display
-        VStack {
-          ForEach(blocks) { block in
-            block
-          }
+        VStack(spacing: organizer.spacing) {
+          content
         }
       }
     }
+    .environmentObject(organizer)
   }
   
   // MARK: - Initalizers
   
-  public init(@BlocksBuilder blocks: () -> [Block]) {
-    self.blocks = blocks()
+  public init(spacing: CGFloat, @ViewBuilder body: @escaping () -> Content) {
+    self.content = body()
+    self.spacing = spacing
+    
+    self._organizer = StateObject(wrappedValue: Organizer(spacing: spacing))
   }
 }
