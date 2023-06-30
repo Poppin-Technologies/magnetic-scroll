@@ -45,8 +45,9 @@ internal class Organizer: ObservableObject {
   
   func setupPublishers() {
     $activeBlock.sink { [weak self] block in
+      guard let strongSelf = self else { return }
       if let block {
-        self?.activatedOffset += (block.height)
+        strongSelf.activatedOffset += (block.height) + strongSelf.spacing
       }
     }
     .store(in: &cancellables)
@@ -78,12 +79,15 @@ internal class Organizer: ObservableObject {
     }
     print("ScrollViewOffest", self.scrollViewOffset.y)
     print("ActivatedOffset", activatedOffset)
-    let nonActivatedOffset = self.scrollViewOffset.y - (activatedOffset + spacing)
+    
+    let nonActivatedOffset = (self.scrollViewOffset.y - activatedOffset + activeBlock!.height / 4)
     print("NonactivatedOffset", nonActivatedOffset)
 
     if nonActivatedOffset > 0 {
       activeBlock = nextBlock
     }
+    
+    // TODO: Add upside handling later
     
     print(blocks)
     print(activeBlock)
