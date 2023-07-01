@@ -62,9 +62,6 @@ public struct Block<Content>: View where Content: View {
               self.height = size.height
             }
         }
-        .frame(height: height)
-        .background(organizer.activeBlock?.id == id ? Color.green : Color.red)
-        .frame(maxWidth: .infinity)
       }
     }
     .animation(.spring(), value: height)
