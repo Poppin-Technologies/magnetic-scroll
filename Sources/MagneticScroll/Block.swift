@@ -62,9 +62,6 @@ public struct Block<Content>: View where Content: View {
               self.height = size.height
             }
         }
-        .frame(height: height)
-        .background(Color.red)
-        .frame(maxWidth: .infinity)
       }
     }
     .animation(.spring(), value: height)
@@ -98,4 +95,8 @@ public struct Block<Content>: View where Content: View {
     
     self.height = height.wrappedValue
   }
+}
+
+public extension Block {
+  typealias ID = AnyHashable?
 }
