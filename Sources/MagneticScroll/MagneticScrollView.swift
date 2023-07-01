@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
 
 @available(iOS 14.0, *)
 public struct MagneticScrollView<Content>: View where Content: View {
