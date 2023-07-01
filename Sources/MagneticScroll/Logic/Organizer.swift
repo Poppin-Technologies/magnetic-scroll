@@ -25,12 +25,28 @@ import OrderedCollections
   
   var spacing: CGFloat
   
-  var nonActivatedOffset: CGFloat {
-    scrollViewOffset.y - activatedOffset + (activeBlock?.height ?? 0) / 4
+  
+  var blocksToActiveBlock : [MagneticBlock] {
+    guard let activeBlock = activeBlock else { return [] }
+    guard let indexOfActiveBlock = blocks.firstIndex(of: activeBlock), indexOfActiveBlock != 0 else { return [] }
+    return Array(blocks.prefix(upTo: indexOfActiveBlock))
   }
   
-  var absoluteDistanceToPreviousBlock: CGFloat {
-    abs(scrollViewOffset.y - (activatedOffset - blocks[0].height - spacing))
+  var blocksFromActiveBlock : [MagneticBlock] {
+    guard let activeBlock = activeBlock else { return [] }
+    guard let indexOfActiveBlock = blocks.firstIndex(of: activeBlock), indexOfActiveBlock != blocks.count - 1 else { return [] }
+    return Array(blocks.suffix(from: (indexOfActiveBlock + 1)))
+  }
+  
+  var offsetUntilActiveBlock : CGFloat {
+    guard let activeBlock = activeBlock else { return 0.0 }
+    var height: CGFloat = 0.0
+    
+    for block in blocks.prefix(upTo: blocks.firstIndex(of: activeBlock) ?? 0) {
+      height += block.height
+    }
+    
+    return height
   }
   
   init(spacing: CGFloat) {
@@ -47,7 +63,7 @@ import OrderedCollections
   }
   
   func activate(with id: Block.ID) {
-    guard let block = blocks.first(where: { $0.id == id }) else { print("Block with ID '\(String(describing: id))' could not be found."); return }
+    guard let block = blocks.first(where: { $0.id == id }) else { return }
     
     self.activeBlock = block
     self.scrollTo(block: block)
@@ -65,28 +81,12 @@ import OrderedCollections
   }
   
   func setupPublishers() {
-    $activeBlock
-      .sink { [weak self] block in
-      guard let strongSelf = self, let block = block else { return }
-      strongSelf.activatedOffset += block.height + strongSelf.spacing
-    }
-    .store(in: &cancellables)
-    
     $scrollViewOffset
       .debounce(for: 0.1, scheduler: DispatchQueue.main)
       .sink { [weak self] scrollViewOffset in
         guard let self = self else { return }
         
-        self.checkIfNextBlockShouldBeActivated()
-        
-        if self.scrollViewOffset.y > self.previousOffset {
-          self.checkIfNextBlockShouldBeActivated()
-        }
-        else {
-          self.checkIfPreviousBlockShouldBeActivated()
-        }
-        
-        self.previousOffset = scrollViewOffset.y
+        self.scrollToOffset()
       }
       .store(in: &cancellables)
   }
@@ -95,13 +95,9 @@ import OrderedCollections
 
 // MARK: - Scroll Handler
 extension Organizer {
-  func scrollTo(block: MagneticBlock, anchor: UnitPoint = .center, upwards : Bool = false) {
+  func scrollTo(block: MagneticBlock, anchor: UnitPoint = .center) {
     self.activeBlock = block
-    
-    if upwards {
-      self.activatedOffset -= block.height * 2
-    }
-    
+
     guard let scrollProxy = proxy else { return }
     
     DispatchQueue.main.async {
@@ -115,105 +111,64 @@ extension Organizer {
 
 // MARK: - Activation Handler
 extension Organizer {
-  func checkIfPreviousBlockShouldBeActivated() {
-
-//    print("Scrolling Upwards!")
-//    print("Active Block Height", activeBlock?.height)
-//    print("ScrollView Offset", scrollViewOffset.y)
-//    print("Activated Offset", activatedOffset)
-    guard blocks.count > 0 else { return }
-
+  func scrollToOffset() {
+    guard blocks.count > 0 else { print("No block is present in MagneticScroll"); return }
+    
     if activeBlock == nil {
       activeBlock = blocks[0]
     }
     
-    guard let activeBlock = activeBlock, let blockIndex = blocks.firstIndex(of: activeBlock) else { return }
-    
-    let previousBlockIndex: Int
-   
-    if blockIndex == 0 {
-      previousBlockIndex = 0
-    }
-    else {
-      previousBlockIndex = blockIndex - 1
-    }
-    
-    let previousBlock = blocks[previousBlockIndex]
-    
-    if absoluteDistanceToPreviousBlock > (activeBlock.height / 2) {
-      if absoluteDistanceToPreviousBlock > activeBlock.height {
-        let filteredBlocks = Array(blocks.prefix(upTo: blockIndex))
-        for (index, block) in filteredBlocks.enumerated() {
-          if index != 0 {
-            let previousBlock = filteredBlocks[index - 1]
-            
-            if absoluteDistanceToPreviousBlock > (previousBlock.height / 2) {
-              self.activatedOffset -= block.height
-              continue
-            } else {
-              self.scrollTo(block: block, upwards: true)
-              break
-            }
+    let nonActivatedOffset = (scrollViewOffset.y - offsetUntilActiveBlock)
+
+    if nonActivatedOffset > 0 {
+      if nonActivatedOffset > (activeBlock!.height / 2) {
+        var scrolledOffset: CGFloat = 0.0
+        
+        for (index, block) in blocksFromActiveBlock.enumerated() {
+          if index == blocksFromActiveBlock.count - 1 {
+            self.scrollTo(block: block)
+            return
+          }
+          
+          let nextBlock = blocksFromActiveBlock[index]
+          print(nextBlock)
+          print(nonActivatedOffset)
+          
+          if nonActivatedOffset > (scrolledOffset + nextBlock.height) {
+            scrolledOffset += nextBlock.height
           }
           else {
-            self.scrollTo(block: block, upwards: true)
-          }
-        }
-      }
-      else {
-        self.scrollTo(block: previousBlock, upwards: true)
-      }
-    }
-    
-  }
-  
-  func checkIfNextBlockShouldBeActivated() {
-//    print("Scrolling Downwards!")
-    
-    guard blocks.count > 0 else { return }
-    
-    if activeBlock == nil {
-      activeBlock = blocks[0]
-    }
-    
-    guard let activeBlock = activeBlock, let blockIndex = blocks.firstIndex(of: activeBlock) else { return }
-    
-    let nextBlockIndex: Int
-    
-    if blockIndex == blocks.count - 1 {
-      nextBlockIndex = blockIndex
-    } else {
-      nextBlockIndex = blockIndex + 1
-    }
-    
-    let nextBlock = blocks[nextBlockIndex]
-    
-//    print("Non Activated Offset: \(nonActivatedOffset)")
-//    print("ActiveBlock: \(activeBlock)")
-//    print("ScrollViewOffset: \(scrollViewOffset.y)")
-    
-    if nonActivatedOffset > 0 {
-      if nonActivatedOffset > activeBlock.height {
-        let filteredBlocks = Array(blocks.suffix(from: nextBlockIndex))
-        for (index, block) in filteredBlocks.enumerated() {
-          if index != filteredBlocks.count - 1 {
-            let nextBlock = filteredBlocks[index + 1]
-            
-            if nonActivatedOffset > (nextBlock.height / 4) {
-              self.activatedOffset += block.height
-              continue
-            } else {
-              self.scrollTo(block: block)
-              break
-            }
-          } else {
             self.scrollTo(block: block)
+            return
           }
         }
       }
-      else {
-        self.scrollTo(block: nextBlock)
+    }
+    else {
+      if nonActivatedOffset < (-1 * (activeBlock!.height / 2)) {
+        var scrolledOffset: CGFloat = 0.0
+        
+        let blocksToActivateBlock = blocksToActiveBlock.reversed()
+        for (index, block) in blocksToActivateBlock.enumerated() {
+          if index == blocksToActivateBlock.count - 1 {
+            self.scrollTo(block: block)
+            return
+          }
+          
+          let previousBlock = blocksToActiveBlock[index + 1]
+          
+
+          if nonActivatedOffset < (scrolledOffset + (previousBlock.height * -1)) {
+            scrolledOffset += previousBlock.height * -1
+          }
+          else {
+            self.scrollTo(block: block)
+            return
+          }
+        }
+        
       }
     }
   }
 }
+
