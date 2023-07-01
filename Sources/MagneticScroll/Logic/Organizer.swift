@@ -25,6 +25,8 @@ import OrderedCollections
   
   var spacing: CGFloat
   
+  var disableMagneticScroll: Bool = false
+  
   
   var blocksToActiveBlock : [MagneticBlock] {
     guard let activeBlock = activeBlock else { return [] }
@@ -51,7 +53,7 @@ import OrderedCollections
   
   init(spacing: CGFloat) {
     self.spacing = spacing
-    setupPublishers()
+    self.setupPublishers()
   }
   
   func feed(with block: MagneticBlock) {
@@ -82,11 +84,14 @@ import OrderedCollections
   
   func setupPublishers() {
     $scrollViewOffset
-      .debounce(for: 0.1, scheduler: DispatchQueue.main)
+      .debounce(for: 0.05, scheduler: DispatchQueue.main)
       .sink { [weak self] scrollViewOffset in
         guard let self = self else { return }
         
-        self.scrollToOffset()
+        print(self.disableMagneticScroll)
+        if !self.disableMagneticScroll {
+          self.scrollToOffset()
+        }
       }
       .store(in: &cancellables)
   }
@@ -96,14 +101,29 @@ import OrderedCollections
 // MARK: - Scroll Handler
 extension Organizer {
   func scrollTo(block: MagneticBlock, anchor: UnitPoint = .center) {
-    self.activeBlock = block
-
+    
     guard let scrollProxy = proxy else { return }
     
     DispatchQueue.main.async {
       withAnimation(.spring()) {
-        scrollProxy.scrollTo(block.id, anchor: anchor)
-        generateHapticFeedback()
+        /**
+         this is to prevent proxy.scrollTo, to be detected as scroll behavior by the algorithm
+         the reason is that when proxy.scrollTo gets triggered, the `scrollViewOffset` changes at the same time and this gets detected as a scroll behavior and this causes an infinite scroll loop
+         */
+        if !self.disableMagneticScroll {
+          self.activeBlock = block
+          generateHapticFeedback()
+          scrollProxy.scrollTo(block.id, anchor: anchor)
+
+          
+          DispatchQueue.main.async {
+            self.disableMagneticScroll = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.39) {
+              self.disableMagneticScroll = false
+            }
+          }
+        }
+
       }
     }
   }
@@ -119,7 +139,7 @@ extension Organizer {
     }
     
     let nonActivatedOffset = (scrollViewOffset.y - offsetUntilActiveBlock)
-
+    
     if nonActivatedOffset > 0 {
       if nonActivatedOffset > (activeBlock!.height / 2) {
         var scrolledOffset: CGFloat = 0.0
@@ -131,15 +151,18 @@ extension Organizer {
           }
           
           let nextBlock = blocksFromActiveBlock[index]
-          print(nextBlock)
-          print(nonActivatedOffset)
+          let shouldScroll = nonActivatedOffset <= (scrolledOffset + nextBlock.height)
           
-          if nonActivatedOffset > (scrolledOffset + nextBlock.height) {
-            scrolledOffset += nextBlock.height
-          }
-          else {
+          print("NonActivatedOffset: \(nonActivatedOffset)")
+          print("ScrolledOffset: \(scrolledOffset)")
+          print("NextBlockHeight: \(nextBlock.height)")
+          
+          if shouldScroll {
             self.scrollTo(block: block)
             return
+          }
+          else {
+            scrolledOffset += nextBlock.height
           }
         }
       }
@@ -157,7 +180,11 @@ extension Organizer {
           
           let previousBlock = blocksToActiveBlock[index + 1]
           
-
+          
+          print("NonActivatedOffset: \(nonActivatedOffset)")
+          print("ScrolledOffset: \(scrolledOffset)")
+          print("PreviousBlockHeight: \(previousBlock.height)")
+          
           if nonActivatedOffset < (scrolledOffset + (previousBlock.height * -1)) {
             scrolledOffset += previousBlock.height * -1
           }
