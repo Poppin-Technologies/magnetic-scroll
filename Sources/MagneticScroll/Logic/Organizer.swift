@@ -88,7 +88,6 @@ import OrderedCollections
       .sink { [weak self] scrollViewOffset in
         guard let self = self else { return }
         
-        print(self.disableMagneticScroll)
         if !self.disableMagneticScroll {
           self.scrollToOffset()
         }
@@ -153,9 +152,9 @@ extension Organizer {
           let nextBlock = blocksFromActiveBlock[index]
           let shouldScroll = nonActivatedOffset <= (scrolledOffset + nextBlock.height)
           
-          print("NonActivatedOffset: \(nonActivatedOffset)")
-          print("ScrolledOffset: \(scrolledOffset)")
-          print("NextBlockHeight: \(nextBlock.height)")
+//          print("NonActivatedOffset: \(nonActivatedOffset)")
+//          print("ScrolledOffset: \(scrolledOffset)")
+//          print("NextBlockHeight: \(nextBlock.height)")
           
           if shouldScroll {
             self.scrollTo(block: block)
@@ -179,11 +178,9 @@ extension Organizer {
           }
           
           let previousBlock = blocksToActiveBlock[index + 1]
-          
-          
-          print("NonActivatedOffset: \(nonActivatedOffset)")
-          print("ScrolledOffset: \(scrolledOffset)")
-          print("PreviousBlockHeight: \(previousBlock.height)")
+//          print("NonActivatedOffset: \(nonActivatedOffset)")
+//          print("ScrolledOffset: \(scrolledOffset)")
+//          print("PreviousBlockHeight: \(previousBlock.height)")
           
           if nonActivatedOffset < (scrolledOffset + (previousBlock.height * -1)) {
             scrolledOffset += previousBlock.height * -1
