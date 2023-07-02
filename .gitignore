@@ -88,3 +88,5 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+Examples/.DS_Store
+Examples/MagneticScrollExample/.DS_Store
