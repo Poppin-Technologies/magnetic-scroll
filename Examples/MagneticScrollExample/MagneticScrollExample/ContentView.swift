@@ -19,30 +19,41 @@ struct ContentView: View {
             Button("Scroll To Bottom") {
               activeBlock = "Fifth"
             }
-            .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+            .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
+            .background(Color.blue)
           }
           Block(id: "First") {
             Text("First Block")
-            .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+            .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
+            .background(Color.blue)
+
           }
           Block(id: "Second") {
             Text("Second Block")
-            .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+            .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
+            .background(Color.blue)
+
           }
           Block(id: "Third") {
             Text("Third Block")
-              .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+              .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
+              .background(Color.blue)
+
           }
           
           Block(id: "Fourth") {
             Text("Fourth Block")
-              .frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+              .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
+              .background(Color.blue)
           }
           
           Block(id: "Fifth") {
             Button("Top") {
               activeBlock = "scroll field"
-            }.frame(width: viewBounds().width, height: viewBounds().height * 0.8)
+            }
+            .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
+            .background(Color.red)
+
           }
         }
       }
