@@ -63,7 +63,7 @@ public struct Block<Content>: View where Content: View {
         }
       }
     }
-    .animation(.spring(), value: height)
+//    .animation(.spring(), value: height)
     .id(id)
     
     .onAppear {

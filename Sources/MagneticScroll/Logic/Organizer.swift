@@ -141,7 +141,7 @@ extension Organizer {
     guard let scrollProxy = proxy else { return }
     
     DispatchQueue.main.async {
-      withAnimation(.spring()) {
+      withAnimation(.interpolatingSpring(stiffness: 353, damping: 12343)) {
         /**
          this is to prevent proxy.scrollTo, to be detected as scroll behavior by the algorithm
          the reason is that when proxy.scrollTo gets triggered, the `scrollViewOffset` changes at the same time and this gets detected as a scroll behavior and this causes an infinite scroll loop
@@ -151,15 +151,11 @@ extension Organizer {
           generateHapticFeedback()
           scrollProxy.scrollTo(block.id, anchor: self.anchor)
 
-          
-          DispatchQueue.main.async {
-            self.disableMagneticScroll = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.39) {
-              self.disableMagneticScroll = false
-            }
+          self.disableMagneticScroll = true
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.39) {
+            self.disableMagneticScroll = false
           }
         }
-
       }
     }
   }
@@ -233,3 +229,11 @@ extension Organizer {
   }
 }
 
+
+extension Organizer {
+  func triggerHapticFeedbackOnBlockChange() {
+    guard let activeBlock = activeBlock else { return }
+    
+      
+  }
+}
