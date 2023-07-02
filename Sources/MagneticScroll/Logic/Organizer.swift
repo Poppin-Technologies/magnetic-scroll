@@ -12,21 +12,28 @@ import OrderedCollections
 /// Organizer to control `Block`s. Supplied by `MagneticScrollView` to all subviews.
 @available(iOS 14.0, *)
 @MainActor internal class Organizer: ObservableObject {
-  @Published var blocks = OrderedSet<MagneticBlock>()
+  
+  // MARK: Wrapped Properties
+  
+  /// Blocks that's been passed to`MagneticScrollView`
+  @Published var blocks: OrderedSet<MagneticBlock> = OrderedSet<MagneticBlock>()
+  /// `MagneticScrollView`s current offset
   @Published var scrollViewOffset: CGPoint = .zero
-  
+  /// Current active block
   @Published var activeBlock: MagneticBlock? = nil
-  @Published var activatedOffset: CGFloat = 0
-  
-  // MARK: - Private variables
-  private var cancellables = Set<AnyCancellable>()
-  private var proxy: ScrollViewProxy? = nil
-  private var previousOffset: CGFloat = 0.0
-  
+  /// Spacing between `Blocks`. Used in calculation
   var spacing: CGFloat
+  /// Anchor that blocks will use
+  var anchor: UnitPoint
   
   var disableMagneticScroll: Bool = false
   
+  // MARK: - Private variables
+  
+  private var cancellables = Set<AnyCancellable>()
+  private var proxy: ScrollViewProxy? = nil
+  private var previousOffset: CGFloat = 0.0
+
   
   var blocksToActiveBlock : [MagneticBlock] {
     guard let activeBlock = activeBlock else { return [] }
@@ -51,19 +58,37 @@ import OrderedCollections
     return height
   }
   
-  init(spacing: CGFloat) {
+  // MARK: - Initializers
+  
+  /// Initializes the `Organizer`.
+  /// - Parameters:
+  ///   - spacing: The spacing between blocks. Default value is 8.
+  ///   - anchor: The anchor point that blocks will use. Default value is `.center`.
+  init(spacing: CGFloat, anchor: UnitPoint) {
     self.spacing = spacing
+    self.anchor = anchor
     self.setupPublishers()
   }
   
+  /** Feeds the `Organizer` with the given `MagneticBlock`.
+   - Parameter block: The `MagneticBlock` to feed to the organizer.
+  */
   func feed(with block: MagneticBlock) {
     blocks.updateOrInsert(block, at: 0)
   }
   
+  /**
+   Prepares the `Organizer` with the given `ScrollViewProxy`.
+   - Parameter proxy: The `ScrollViewProxy` to prepare with.
+  */
   func prepare(with proxy: ScrollViewProxy) {
     self.proxy = proxy
   }
   
+  /**
+    Activates the block with the specified ID.
+    - Parameter id: The ID of the block to activate.
+   */
   func activate(with id: Block.ID) {
     guard let block = blocks.first(where: { $0.id == id }) else { return }
     
@@ -71,10 +96,20 @@ import OrderedCollections
     self.scrollTo(block: block)
   }
   
+  /**
+   Updates the given block in the `Organizer`.
+   - Parameter block: The block to update.
+  */
   func update(block: MagneticBlock) {
     blocks.updateOrAppend(block)
   }
   
+  /**
+   Replaces the given block with a new block in the `Organizer`.
+   - Parameters:
+     - block: The block to replace.
+     - newBlock: The new block to insert.
+  */
   func replace(block: MagneticBlock, with newBlock: MagneticBlock) {
     guard let blockIndex = blocks.firstIndex(of: block) else { return }
     
@@ -82,7 +117,9 @@ import OrderedCollections
     blocks.insert(newBlock, at: blockIndex)
   }
   
-  func setupPublishers() {
+  // MARK: - Private Methods
+
+  private func setupPublishers() {
     $scrollViewOffset
       .debounce(for: 0.05, scheduler: DispatchQueue.main)
       .sink { [weak self] scrollViewOffset in
@@ -99,7 +136,7 @@ import OrderedCollections
 
 // MARK: - Scroll Handler
 extension Organizer {
-  func scrollTo(block: MagneticBlock, anchor: UnitPoint = .center) {
+  func scrollTo(block: MagneticBlock) {
     
     guard let scrollProxy = proxy else { return }
     
@@ -112,7 +149,7 @@ extension Organizer {
         if !self.disableMagneticScroll {
           self.activeBlock = block
           generateHapticFeedback()
-          scrollProxy.scrollTo(block.id, anchor: anchor)
+          scrollProxy.scrollTo(block.id, anchor: self.anchor)
 
           
           DispatchQueue.main.async {
