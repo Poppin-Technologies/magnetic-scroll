@@ -16,10 +16,25 @@ struct MultipleBlocksView: View {
     MagneticScrollView(activeBlock: $activeBlock) {
       ForEach(ids, id: \.self) { id in
         Block(id: id, height: 600, inActiveHeight: 400) {
-          Text("Hello World")
+          VStack {
+            if activeBlock == id {
+              Text("This is a header").font(.title2)
+            }
+            TextField("Input info here", text: .constant(""), onCommit: {
+              // Next block
+            })
+              .border(.black)
+            Text("This is secondary info").opacity(0.5)
+            if activeBlock == id {
+              Button("Next Block") {
+                let i = ids.firstIndex(of: activeBlock) as! Int
+                self.activeBlock = ids[i + 1]
+              }
+            }
+          }
         }
         .frame(maxWidth: .infinity)
-        .background(Color.green)
+        .background(Color.green.opacity(0.3))
       }
     }
     .triggersHapticFeedbackOnBlockChange()
@@ -28,10 +43,7 @@ struct MultipleBlocksView: View {
 
 struct ContentView: View {
   var body: some View {
-    TabView {
-      SingleBlocksView()
-      MultipleBlocksView()
-    }
+    MultipleBlocksView()
   }
 }
 

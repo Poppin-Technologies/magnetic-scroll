@@ -70,6 +70,7 @@ public struct Block<Content>: View where Content: View {
               }
             }
             .frame(height: magneticBlock.height)
+            .frame(maxWidth: .infinity)
         }
       }
     }
