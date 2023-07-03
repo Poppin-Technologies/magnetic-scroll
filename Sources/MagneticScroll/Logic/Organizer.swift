@@ -141,7 +141,7 @@ extension Organizer {
     guard let scrollProxy = proxy else { return }
     
     DispatchQueue.main.async {
-      withAnimation(.interpolatingSpring(stiffness: 353, damping: 12343)) {
+      withAnimation {
         /**
          this is to prevent proxy.scrollTo, to be detected as scroll behavior by the algorithm
          the reason is that when proxy.scrollTo gets triggered, the `scrollViewOffset` changes at the same time and this gets detected as a scroll behavior and this causes an infinite scroll loop

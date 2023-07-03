@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 internal struct OffsetObservingScrollView<Content: View>: View {
     var axes: Axis.Set = [.vertical]
@@ -32,5 +33,8 @@ internal struct OffsetObservingScrollView<Content: View>: View {
             )
         }
         .coordinateSpace(name: coordinateSpaceName)
+        .introspect(.scrollView, on: .iOS(.v14),.iOS(.v15), .iOS(.v16), .iOS(.v17)) { scrollView in
+          scrollView.setValue(0.2, forKeyPath: "contentOffsetAnimationDuration")
+        }
     }
 }
