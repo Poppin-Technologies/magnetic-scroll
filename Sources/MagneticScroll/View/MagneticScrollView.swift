@@ -97,11 +97,16 @@ public extension MagneticScrollView {
     MagneticScrollConfiguration.shared.triggersHapticFeedbackOnBlockChange = bool
     return self
   }
-  
+ 
+  func formStyle(_ bool: Bool = true) -> MagneticScrollView {
+    MagneticScrollConfiguration.shared.formStyle = bool
+    return self
+  }
   
   func scrollAnimationDuration(_ duration: Double) -> MagneticScrollView {
     MagneticScrollConfiguration.shared.scrollAnimationDuration = duration
     return self
   }
 }
+
 

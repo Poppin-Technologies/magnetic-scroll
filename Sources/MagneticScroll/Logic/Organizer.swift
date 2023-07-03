@@ -23,6 +23,9 @@ import OrderedCollections
   @Published var activeBlock: MagneticBlock? = nil
   /// An array of `CGFloat` to calculate velocity of `MagneticScrollView`
   @Published var lastScrollValues: [CGFloat] = []
+  /// Whether or not `MagneticScrollView` is scrolling
+  @Published var isScrolling = false
+  
   var spacing: CGFloat
   /// Anchor that blocks will use
   var anchor: UnitPoint
@@ -119,20 +122,17 @@ import OrderedCollections
   // MARK: - Private Methods
   
   private func setupPublishers() {
-    //    $scrollViewOffset
-    //      .debounce(for: 0.02, scheduler: DispatchQueue.main)
-    //      .sink { [weak self] scrollViewOffset in
-    //        guard let self = self else { return }
-    //
-    ////        print(self.scrollViewOffset.y)
-    //        if !self.disableMagneticScroll {
-    //          self.scrollToOffset()
-    //        }
-    //      }
-    //      .store(in: &cancellables)
+      $scrollViewOffset
+        .debounce(for: 0.02, scheduler: DispatchQueue.main)
+        .sink { [weak self] scrollViewOffset in
+          guard let self = self else { return }
+          self.isScrolling = false
+        }
+        .store(in: &cancellables)
     
     $scrollViewOffset.sink { [weak self] point in
       guard let self = self else { return }
+      self.isScrolling = true
       if self.lastScrollValues.count > self.scrollIndex {
         self.lastScrollValues[scrollIndex] = point.y
       }
@@ -147,6 +147,9 @@ import OrderedCollections
     }
     .store(in: &cancellables)
     
+    $isScrolling.sink { value in
+      print(value)
+    }.store(in: &cancellables)
     $lastScrollValues
       .throttle(for: 1, scheduler: DispatchQueue.main, latest: true)
       .sink { array in

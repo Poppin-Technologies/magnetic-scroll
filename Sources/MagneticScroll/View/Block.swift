@@ -79,6 +79,7 @@ public struct Block<Content>: View where Content: View {
       TapGesture()
         .onEnded {
           if MagneticScrollConfiguration.shared.changesActiveBlockOnTapGesture {
+            if MagneticScrollConfiguration.shared.formStyle && !organizer.isScrolling { return }
             organizer.activeBlock = magneticBlock
             organizer.scrollTo(block: magneticBlock)
           }
