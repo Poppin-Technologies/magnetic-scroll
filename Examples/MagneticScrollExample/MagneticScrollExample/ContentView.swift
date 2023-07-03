@@ -8,55 +8,81 @@
 import SwiftUI
 import MagneticScroll
 
+
+struct MultipleBlocksView: View {
+  let ids = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth"]
+  @State private var activeBlock: Block.ID = "First"
+  var body: some View {
+    MagneticScrollView(activeBlock: $activeBlock) {
+      ForEach(ids, id: \.self) { id in
+        Block(id: id, height: 600, inActiveHeight: 400) {
+          Text("Hello World")
+        }
+        .frame(maxWidth: .infinity)
+        .background(Color.green)
+      }
+    }
+    .triggersHapticFeedbackOnBlockChange()
+  }
+}
+
 struct ContentView: View {
+  var body: some View {
+    TabView {
+      SingleBlocksView()
+      MultipleBlocksView()
+    }
+  }
+}
+
+struct SingleBlocksView: View {
   @State private var activeBlock : Block.ID = "First"
-  
+  @State private var height: CGFloat = 200
   var body: some View {
     VStack {
-      ScrollViewReader { proxy in
-        MagneticScrollView(activeBlock: $activeBlock) {
-          Block(id: "scroll field") {
-            Button("Scroll To Bottom") {
-              activeBlock = "Fifth"
-            }
-            .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
-            .background(Color.blue)
+      MagneticScrollView(activeBlock: $activeBlock) {
+        Block(id: "scroll field", height: 400, inActiveHeight: 600) {
+          Button("Scroll To Bottom") {
+            activeBlock = "Fifth"
           }
-          Block(id: "First") {
-            Text("First Block")
-            .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
-            .background(Color.blue)
-
+          .frame(maxWidth: .infinity)
+        }
+        .background(Color.green)
+        Block(id: "First", height: 400, inActiveHeight: 600) {
+          Text("First Block")
+            .frame(maxWidth: .infinity)
+        }
+        
+        .background(Color.blue)
+        
+        Block(id: "Second", height: 400, inActiveHeight: 600) {
+          Text("Second Block")
+            .frame(maxWidth: .infinity)
+        }
+        .background(Color.blue)
+        
+        Block(id: "Third", height: 400, inActiveHeight: 600) {
+          Text("Third Block")
+            .frame(maxWidth: .infinity)
+        }
+        .background(Color.blue)
+        
+        Block(id: "Fourth", height: 400, inActiveHeight: 600) {
+          Text("Fourth Block")
+        }
+        .background(Color.blue)
+        
+        Block(id: "Fifth", height: 400, inActiveHeight: 600) {
+          Button("Top") {
+            activeBlock = "scroll field"
           }
-          Block(id: "Second") {
-            Text("Second Block")
-            .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
-            .background(Color.blue)
-
-          }
-          Block(id: "Third") {
-            Text("Third Block")
-              .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
-              .background(Color.blue)
-
-          }
+          .background(Color.red)
           
-          Block(id: "Fourth") {
-            Text("Fourth Block")
-              .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
-              .background(Color.blue)
-          }
-          
-          Block(id: "Fifth") {
-            Button("Top") {
-              activeBlock = "scroll field"
-            }
-            .frame(width: viewBounds().width, height: viewBounds().height * 0.7)
-            .background(Color.red)
-
-          }
         }
       }
+      .changesActiveBlockOnTapGesture()
+      .triggersHapticFeedbackOnBlockChange()
+      .velocityThreshold(1.0)
     }
   }
   
