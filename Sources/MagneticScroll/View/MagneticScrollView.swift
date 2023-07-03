@@ -10,8 +10,6 @@ import SwiftUI
 /** A scroll view that organizes `Block`s that's been passed to it.
  */
 public struct MagneticScrollView<Content>: View where Content: View {
-  @StateObject private var organizer : Organizer
-  
   // MARK: - Properties
   var spacing: CGFloat = 8
   
@@ -25,7 +23,7 @@ public struct MagneticScrollView<Content>: View where Content: View {
   private var content: Content
   
   // MARK: - Private Properties
-  @State private var initialVelocity: CGFloat = .zero
+  @StateObject private var organizer : Organizer
   
   public var body: some View {
     GeometryReader { proxy in
@@ -42,20 +40,14 @@ public struct MagneticScrollView<Content>: View where Content: View {
         .onChange(of: activeBlock) { newValue in
           organizer.activate(with: newValue)
         }
-        .simultaneousGesture(
-          DragGesture()
-            .onChanged { value in
-              let endLocation = value.predictedEndLocation
-              
-              print(endLocation)
-            }
-        )
-        .onChange(of: organizer.activeBlock) { newValue in
+        .onChange(of: organizer.activeBlock) { block in
+          guard let block = block else { return }
           if activeBlock != organizer.activeBlock?.id {
-            activeBlock = newValue
+            activeBlock = block.id
           }
         }
       }
+
     }
     .environmentObject(organizer)
   }
@@ -76,3 +68,40 @@ public struct MagneticScrollView<Content>: View where Content: View {
     self._organizer = StateObject(wrappedValue: Organizer(spacing: spacing, anchor: anchor))
   }
 }
+
+
+
+// MARK: - View Extensions
+
+public extension MagneticScrollView {
+  /**
+   
+   */
+  func changesActiveBlockOnTapGesture(_ value: Bool = true) -> MagneticScrollView {
+    MagneticScrollConfiguration.shared.changesActiveBlockOnTapGesture = value
+    return self
+  }
+  
+  /**
+    
+   */
+  func velocityThreshold(_ threshold: Double) -> MagneticScrollView {
+    MagneticScrollConfiguration.shared.scrollVelocityThreshold = threshold
+    return self
+  }
+  
+  /**
+    
+   */
+  func triggersHapticFeedbackOnBlockChange(_ bool: Bool = true) -> MagneticScrollView {
+    MagneticScrollConfiguration.shared.triggersHapticFeedbackOnBlockChange = bool
+    return self
+  }
+  
+  
+  func scrollAnimationDuration(_ duration: Double) -> MagneticScrollView {
+    MagneticScrollConfiguration.shared.scrollAnimationDuration = duration
+    return self
+  }
+}
+
