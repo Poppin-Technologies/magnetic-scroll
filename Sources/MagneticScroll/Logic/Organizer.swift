@@ -147,9 +147,6 @@ import OrderedCollections
     }
     .store(in: &cancellables)
     
-    $isScrolling.sink { value in
-      print(value)
-    }.store(in: &cancellables)
     $lastScrollValues
       .throttle(for: 1, scheduler: DispatchQueue.main, latest: true)
       .sink { array in
@@ -222,14 +219,24 @@ extension Organizer {
           }
           
           let nextBlock = blocksFromActiveBlock[index]
-          let shouldScroll = nonActivatedOffset <= (scrolledOffset + nextBlock.height)
-          
-          //          print("NonActivatedOffset: \(nonActivatedOffset)")
-          //          print("ScrolledOffset: \(scrolledOffset)")
-          //          print("NextBlockHeight: \(nextBlock.height)")
+          let absoluteOffset = scrolledOffset + block.height
+          let shouldScroll = nonActivatedOffset <= (absoluteOffset)
           
           if shouldScroll {
-            self.scrollTo(block: block)
+            if scrolledOffset > 0.0 {
+              let centerOfNextBlock = nextBlock.height / 2
+              let centerOfBlock = block.height / 2
+              
+              if absoluteOffset - centerOfNextBlock > absoluteOffset - centerOfBlock {
+                self.scrollTo(block: nextBlock)
+              }
+              else {
+                self.scrollTo(block: block)
+              }
+            }
+            else {
+              self.scrollTo(block: block)
+            }
             return
           }
           else {
@@ -250,15 +257,27 @@ extension Organizer {
           }
           
           let previousBlock = blocksToActiveBlock[index + 1]
-          //          print("NonActivatedOffset: \(nonActivatedOffset)")
-          //          print("ScrolledOffset: \(scrolledOffset)")
-          //          print("PreviousBlockHeight: \(previousBlock.height)")
+          let absoluteOffset = previousBlock.height * -1
           
-          if nonActivatedOffset < (scrolledOffset + (previousBlock.height * -1)) {
+          if nonActivatedOffset < (scrolledOffset + absoluteOffset) {
             scrolledOffset += previousBlock.height * -1
           }
           else {
-            self.scrollTo(block: block)
+            if scrolledOffset > 0.0 {
+              let centerOfPreviousBlock = previousBlock.height / 2
+              let centerOfBlock = block.height / 2
+              
+              if absoluteOffset + centerOfPreviousBlock < absoluteOffset + centerOfBlock {
+                self.scrollTo(block: previousBlock)
+              }
+              else {
+                self.scrollTo(block: block)
+              }
+
+            }
+            else {
+              self.scrollTo(block: block)
+            }
             return
           }
         }
