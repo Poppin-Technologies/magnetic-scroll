@@ -13,6 +13,7 @@ let package = Package(
       targets: ["MagneticScroll"]),
   ],
   dependencies: [
+    .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", .upToNextMajor(from: "0.7.0")),
     .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.0.0"))
   ],
   targets: [
@@ -22,6 +23,7 @@ let package = Package(
       name: "MagneticScroll",
       dependencies: [
         .product(name: "OrderedCollections", package: "swift-collections"),
+        .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
       ]
     )
   ]
