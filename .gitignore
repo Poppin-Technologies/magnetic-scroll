@@ -90,3 +90,5 @@ fastlane/test_output
 iOSInjectionProject/
 Examples/.DS_Store
 Examples/MagneticScrollExample/.DS_Store
+Preview Assets.xcassets/Contents.json
+Examples/MagneticScrollExample/MagneticScrollExample/Preview Content/Preview Assets.xcassets/Contents.json
