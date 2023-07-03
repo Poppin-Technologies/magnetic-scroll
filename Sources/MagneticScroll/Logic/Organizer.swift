@@ -42,7 +42,7 @@ import OrderedCollections
     guard let indexOfActiveBlock = blocks.firstIndex(of: activeBlock), indexOfActiveBlock != 0 else { return [] }
     return Array(blocks.prefix(upTo: indexOfActiveBlock))
   }
-
+  
   var offsetUntilActiveBlock : CGFloat {
     guard let activeBlock = activeBlock else { return 0.0 }
     var height: CGFloat = 0.0
@@ -68,7 +68,7 @@ import OrderedCollections
   
   /** Feeds the `Organizer` with the given `MagneticBlock`.
    - Parameter block: The `MagneticBlock` to feed to the organizer.
-  */
+   */
   func feed(with block: MagneticBlock) {
     blocks.updateOrInsert(block, at: 0)
   }
@@ -76,41 +76,39 @@ import OrderedCollections
   /**
    Prepares the `Organizer` with the given `ScrollViewProxy`.
    - Parameter proxy: The `ScrollViewProxy` to prepare with.
-  */
+   */
   func prepare(with proxy: ScrollViewProxy) {
     self.proxy = proxy
   }
   
   /**
-    Activates the block with the specified ID.
-    - Parameter id: The ID of the block to activate.
+   Activates the block with the specified ID.
+   - Parameter id: The ID of the block to activate.
    */
   func activate(with id: Block.ID) {
     guard let block = blocks.first(where: { $0.id == id }) else { return }
     
-    self.activeBlock = block
     self.scrollTo(block: block)
   }
   
   /**
    Updates the given block in the `Organizer`.
    - Parameter block: The block to update.
-  */
+   */
   func update(block: MagneticBlock) {
     if let blockIndex = blocks.firstIndex(of: block) {
       blocks.update(block, at: blockIndex)
     } else {
       blocks.append(block)
     }
-    print(blocks)
   }
   
   /**
    Replaces the given block with a new block in the `Organizer`.
    - Parameters:
-     - block: The block to replace.
-     - newBlock: The new block to insert.
-  */
+   - block: The block to replace.
+   - newBlock: The new block to insert.
+   */
   func replace(block: MagneticBlock, with newBlock: MagneticBlock) {
     guard let blockIndex = blocks.firstIndex(of: block) else { return }
     
@@ -119,19 +117,19 @@ import OrderedCollections
   }
   
   // MARK: - Private Methods
-
+  
   private func setupPublishers() {
-    $scrollViewOffset
-      .debounce(for: 0.02, scheduler: DispatchQueue.main)
-      .sink { [weak self] scrollViewOffset in
-        guard let self = self else { return }
-        
-//        print(self.scrollViewOffset.y)
-        if !self.disableMagneticScroll {
-          self.scrollToOffset()
-        }
-      }
-      .store(in: &cancellables)
+    //    $scrollViewOffset
+    //      .debounce(for: 0.02, scheduler: DispatchQueue.main)
+    //      .sink { [weak self] scrollViewOffset in
+    //        guard let self = self else { return }
+    //
+    ////        print(self.scrollViewOffset.y)
+    //        if !self.disableMagneticScroll {
+    //          self.scrollToOffset()
+    //        }
+    //      }
+    //      .store(in: &cancellables)
     
     $scrollViewOffset.sink { [weak self] point in
       guard let self = self else { return }
@@ -149,20 +147,23 @@ import OrderedCollections
     }
     .store(in: &cancellables)
     
-    $lastScrollValues.sink { array in
-      var totalDifference: Double = 0.0
-      
-      for i in 0..<array.count - 1 {
-        let difference = array[i+1] - array[i]
-        totalDifference += difference
+    $lastScrollValues
+      .throttle(for: 1, scheduler: DispatchQueue.main, latest: true)
+      .sink { array in
+        guard array.count > 0 else { return }
+        var totalDifference: Double = 0.0
+        
+        for i in 0..<array.count - 1 {
+          let difference = array[i+1] - array[i]
+          totalDifference += difference
+        }
+        
+        let averageDifference = totalDifference / Double(array.count - 1)
+        if abs(averageDifference) <= MagneticScrollConfiguration.shared.scrollVelocityThreshold {
+          self.scrollToOffset()
+        }
       }
-      
-      let averageDifference = totalDifference / Double(array.count - 1)
-      if abs(averageDifference) <= MagneticScrollConfiguration.shared.scrollVelocityThreshold {
-        self.scrollToOffset()
-      }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
   }
 }
 
@@ -170,7 +171,6 @@ import OrderedCollections
 // MARK: - Scroll Handler
 extension Organizer {
   func scrollTo(block: MagneticBlock) {
-    
     guard let scrollProxy = proxy else { return }
     
     DispatchQueue.main.async {
@@ -180,10 +180,11 @@ extension Organizer {
          the reason is that when proxy.scrollTo gets triggered, the `scrollViewOffset` changes at the same time and this gets detected as a scroll behavior and this causes an infinite scroll loop
          */
         if !self.disableMagneticScroll {
+          generateSelectedFeedback()
           self.activeBlock = block
-          generateHapticFeedback()
+          print("Scrolling to Block ID: \(block.id)")
           scrollProxy.scrollTo(block.id, anchor: self.anchor)
-
+          
           self.disableMagneticScroll = true
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.39) {
             self.disableMagneticScroll = false
@@ -197,7 +198,8 @@ extension Organizer {
 // MARK: - Activation Handler
 extension Organizer {
   func scrollToOffset() {
-    guard blocks.count > 0 else { print("No block is present in MagneticScroll"); return }
+    self.lastScrollValues = []
+    guard blocks.count > 0 else { return }
     
     if activeBlock == nil {
       activeBlock = blocks[0]
@@ -219,9 +221,9 @@ extension Organizer {
           let nextBlock = blocksFromActiveBlock[index]
           let shouldScroll = nonActivatedOffset <= (scrolledOffset + nextBlock.height)
           
-//          print("NonActivatedOffset: \(nonActivatedOffset)")
-//          print("ScrolledOffset: \(scrolledOffset)")
-//          print("NextBlockHeight: \(nextBlock.height)")
+          //          print("NonActivatedOffset: \(nonActivatedOffset)")
+          //          print("ScrolledOffset: \(scrolledOffset)")
+          //          print("NextBlockHeight: \(nextBlock.height)")
           
           if shouldScroll {
             self.scrollTo(block: block)
@@ -245,9 +247,9 @@ extension Organizer {
           }
           
           let previousBlock = blocksToActiveBlock[index + 1]
-//          print("NonActivatedOffset: \(nonActivatedOffset)")
-//          print("ScrolledOffset: \(scrolledOffset)")
-//          print("PreviousBlockHeight: \(previousBlock.height)")
+          //          print("NonActivatedOffset: \(nonActivatedOffset)")
+          //          print("ScrolledOffset: \(scrolledOffset)")
+          //          print("PreviousBlockHeight: \(previousBlock.height)")
           
           if nonActivatedOffset < (scrolledOffset + (previousBlock.height * -1)) {
             scrolledOffset += previousBlock.height * -1
@@ -266,29 +268,35 @@ extension Organizer {
 
 extension Organizer {
   func triggerHapticFeedbackOnBlockChange() {
+    if activeHapticBlock == nil {
+      self.activeHapticBlock = activeBlock
+    }
     guard let activeHapticBlock = activeHapticBlock else { return }
     guard let activeBlockIndex = blocks.firstIndex(of: activeHapticBlock) else { return }
-    let blocks = self.blocks(from: activeHapticBlock)
-    let activatedOffset = blocks.reduce(0) { $0 + $1.height }
-      
+    let blocksToActivate = self.blocks(to: activeHapticBlock)
+    
+    let activatedOffset = blocksToActivate.reduce(0) { $0 + $1.height }
+    
     let realOffset = self.scrollViewOffset.y - activatedOffset
     
     if realOffset > 0 {
       var nextBlockIndex = activeBlockIndex + 1
-      if activeBlockIndex != blocks.count - 1 { nextBlockIndex = 0 }
+      if activeBlockIndex == blocks.count - 1 { nextBlockIndex = activeBlockIndex }
       let nextBlock = blocks[nextBlockIndex]
       
-      if realOffset > nextBlock.height {
+      if realOffset > nextBlock.height / 2 {
+        self.activeHapticBlock = nextBlock
         generateHapticFeedback()
       }
     }
     else {
       var previousBlockIndex = activeBlockIndex - 1
-      if activeBlockIndex != 0 { previousBlockIndex = 0 }
+      if activeBlockIndex == 0 { previousBlockIndex = 0 }
       
       let previousBlock = blocks[previousBlockIndex]
       
       if abs(realOffset) > previousBlock.height {
+        self.activeHapticBlock = previousBlock
         generateHapticFeedback()
       }
     }
@@ -302,5 +310,11 @@ extension Organizer {
     guard let block = block else { return [] }
     guard let indexOfBlock = blocks.firstIndex(of: block), indexOfBlock != blocks.count - 1 else { return [] }
     return Array(blocks.suffix(from: (indexOfBlock + 1)))
+  }
+  
+  func blocks(to block: MagneticBlock?) -> [MagneticBlock] {
+    guard let block = block else { return [] }
+    guard let indexOfBlock = blocks.firstIndex(of: block), indexOfBlock != 0 else { return [] }
+    return Array(blocks.prefix(upTo: indexOfBlock))
   }
 }

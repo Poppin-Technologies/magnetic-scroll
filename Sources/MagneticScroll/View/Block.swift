@@ -78,7 +78,6 @@ public struct Block<Content>: View where Content: View {
     .simultaneousGesture(
       TapGesture()
         .onEnded {
-          print("Lol")
           if MagneticScrollConfiguration.shared.changesActiveBlockOnTapGesture {
             organizer.activeBlock = magneticBlock
             organizer.scrollTo(block: magneticBlock)
@@ -109,8 +108,6 @@ public struct Block<Content>: View where Content: View {
     isShown: Binding<Bool> = .constant(true),
     @ViewBuilder body: @escaping () -> Content
   ) {
-    print(height)
-    print(inActiveHeight)
     self.content = body()
     self.id = id
     self._isShown = isShown

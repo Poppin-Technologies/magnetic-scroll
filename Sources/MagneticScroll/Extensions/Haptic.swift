@@ -11,3 +11,9 @@ import AudioToolbox
 func generateHapticFeedback() {
   AudioServicesPlaySystemSound(1519)
 }
+
+func generateSelectedFeedback() {
+  let feedbackGenerator = UISelectionFeedbackGenerator()
+  feedbackGenerator.prepare()
+  feedbackGenerator.selectionChanged()
+}
