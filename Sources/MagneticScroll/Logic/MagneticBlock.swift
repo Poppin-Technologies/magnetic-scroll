@@ -9,7 +9,7 @@ import SwiftUI
 
 @available(iOS 14.0, *)
 internal struct MagneticBlock: Identifiable {
-  var id: AnyHashable?
+  var id: String = ""
   var height: CGFloat
 }
 
