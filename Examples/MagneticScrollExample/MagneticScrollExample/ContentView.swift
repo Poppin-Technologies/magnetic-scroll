@@ -28,13 +28,15 @@ struct MultipleBlocksView: View {
             if activeBlock == id {
               Text("This is secondary info").opacity(0.5)
               Button("Prev Block") {
-                let i = ids.firstIndex(of: activeBlock) as! Int
+                let i = ids.firstIndex(of: activeBlock)!
                 self.activeBlock = ids[i - 1]
               }
+              .disabled(ids.firstIndex(of: activeBlock)! == 0)
               Button("Next Block") {
-                let i = ids.firstIndex(of: activeBlock) as! Int
+                let i = ids.firstIndex(of: activeBlock)!
                 self.activeBlock = ids[i + 1]
               }
+              .disabled(ids.firstIndex(of: activeBlock)! == ids.count - 1)
             }
           }
           .padding()
@@ -43,8 +45,8 @@ struct MultipleBlocksView: View {
         .background(Color.green.opacity(0.3))
       }
     }
-    .triggersHapticFeedbackOnBlockChange()
-    .changesActiveBlockOnTapGesture(true)
+    .formStyle()
+    .setTimeout(0.15)
   }
 }
 
