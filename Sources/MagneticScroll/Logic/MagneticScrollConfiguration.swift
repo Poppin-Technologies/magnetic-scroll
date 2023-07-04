@@ -18,7 +18,7 @@ internal class MagneticScrollConfiguration {
   ///
   var triggersHapticFeedbackOnBlockChange = true
   ///
-  var scrollAnimationDuration: Double = 0.5
+  var scrollAnimationDuration: Double = 0.35
   
   var formStyle = false
   

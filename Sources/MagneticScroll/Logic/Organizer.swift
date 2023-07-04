@@ -130,6 +130,14 @@ import OrderedCollections
         }
         .store(in: &cancellables)
     
+//    $scrollViewOffset
+//      .debounce(for: 0.2, scheduler: DispatchQueue.main)
+//      .sink { [weak self] point in
+//        guard let self = self else { return }
+//        self.scrollToOffset()
+//    }
+//    .store(in: &cancellables)
+    
     $scrollViewOffset.sink { [weak self] point in
       guard let self = self else { return }
       self.isScrolling = true
@@ -148,19 +156,21 @@ import OrderedCollections
     .store(in: &cancellables)
     
     $lastScrollValues
-      .throttle(for: 1, scheduler: DispatchQueue.main, latest: true)
+      .throttle(for: 0.2, scheduler: DispatchQueue.main, latest: true)
       .sink { array in
         guard array.count > 0 else { return }
         var totalDifference: Double = 0.0
-        
+
         for i in 0..<array.count - 1 {
           let difference = array[i+1] - array[i]
           totalDifference += difference
         }
-        
+
         let averageDifference = totalDifference / Double(array.count - 1)
         if abs(averageDifference) <= MagneticScrollConfiguration.shared.scrollVelocityThreshold {
-          self.scrollToOffset()
+          DispatchQueue.main.async {
+            self.scrollToOffset()
+          }
         }
       }
       .store(in: &cancellables)
@@ -172,23 +182,20 @@ import OrderedCollections
 extension Organizer {
   func scrollTo(block: MagneticBlock) {
     guard let scrollProxy = proxy else { return }
-    
-    DispatchQueue.main.async {
-      withAnimation {
-        /**
-         this is to prevent proxy.scrollTo, to be detected as scroll behavior by the algorithm
-         the reason is that when proxy.scrollTo gets triggered, the `scrollViewOffset` changes at the same time and this gets detected as a scroll behavior and this causes an infinite scroll loop
-         */
-        if !self.disableMagneticScroll {
-          generateSelectedFeedback()
-          self.activeBlock = block
-          print("Scrolling to Block ID: \(block.id)")
-          scrollProxy.scrollTo(block.id, anchor: self.anchor)
-          
-          self.disableMagneticScroll = true
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.39) {
-            self.disableMagneticScroll = false
-          }
+    withAnimation {
+      /**
+       this is to prevent proxy.scrollTo, to be detected as scroll behavior by the algorithm
+       the reason is that when proxy.scrollTo gets triggered, the `scrollViewOffset` changes at the same time and this gets detected as a scroll behavior and this causes an infinite scroll loop
+       */
+      if !self.disableMagneticScroll {
+        generateSelectedFeedback()
+        print("Scrolling to Block ID: \(block.id)")
+        scrollProxy.scrollTo(block.id, anchor: self.anchor)
+        self.activeBlock = block
+        
+        self.disableMagneticScroll = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.39) {
+          self.disableMagneticScroll = false
         }
       }
     }
@@ -198,12 +205,13 @@ extension Organizer {
 // MARK: - Activation Handler
 extension Organizer {
   func scrollToOffset() {
-    self.lastScrollValues = []
     guard blocks.count > 0 else { return }
     
     if activeBlock == nil {
       activeBlock = blocks[0]
     }
+    self.lastScrollValues = []
+
     
     let nonActivatedOffset = (scrollViewOffset.y - offsetUntilActiveBlock)
     
