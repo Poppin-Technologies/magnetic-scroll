@@ -190,7 +190,9 @@ extension Organizer {
        the reason is that when proxy.scrollTo gets triggered, the `scrollViewOffset` changes at the same time and this gets detected as a scroll behavior and this causes an infinite scroll loop
        */
       if !self.disableMagneticScroll {
-        generateSelectedFeedback()
+        if MagneticScrollConfiguration.shared.triggersHapticFeedbackOnActiveBlockChange {
+          generateSelectedFeedback()
+        }
         scrollProxy.scrollTo(block.id, anchor: self.anchor)
         self.activeBlock = block
         

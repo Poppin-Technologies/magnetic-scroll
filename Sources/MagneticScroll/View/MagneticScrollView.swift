@@ -29,7 +29,6 @@ public struct MagneticScrollView<Content>: View where Content: View {
     GeometryReader { proxy in
       ScrollViewReader { scrollViewProxy in
         OffsetObservingScrollView(offset: $organizer.scrollViewOffset) {
-          // TODO: Implement block display
           VStack(spacing: organizer.spacing) {
             content
           }

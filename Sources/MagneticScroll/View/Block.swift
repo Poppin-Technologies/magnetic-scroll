@@ -28,6 +28,7 @@ public struct Block<Content>: View where Content: View {
   var inActiveHeight: CGFloat = .zero
   
   @State private var viewHeight: CGFloat = .zero
+  
   // MARK: - Binding
   
   /// Whether or not block is shown
@@ -54,6 +55,7 @@ public struct Block<Content>: View where Content: View {
   }
   
   // MARK: - Views
+  
   public var body: some View {
     ZStack {
       if isShown {
