@@ -156,20 +156,22 @@ import OrderedCollections
     .store(in: &cancellables)
     
     $lastScrollValues
-      .throttle(for: 0.2, scheduler: DispatchQueue.main, latest: true)
-      .sink { array in
-        guard array.count > 0 else { return }
-        var totalDifference: Double = 0.0
-
-        for i in 0..<array.count - 1 {
-          let difference = array[i+1] - array[i]
-          totalDifference += difference
-        }
-
-        let averageDifference = totalDifference / Double(array.count - 1)
-        if abs(averageDifference) <= MagneticScrollConfiguration.shared.scrollVelocityThreshold {
-          DispatchQueue.main.async {
-            self.scrollToOffset()
+      .sink { [weak self] array in
+        guard let self = self else { return }
+        if !self.disableMagneticScroll {
+          guard array.count > 0 else { return }
+          var totalDifference: Double = 0.0
+          
+          for i in 0..<array.count - 1 {
+            let difference = array[i+1] - array[i]
+            totalDifference += difference
+          }
+          
+          let averageDifference = totalDifference / Double(array.count - 1)
+          if abs(averageDifference) <= MagneticScrollConfiguration.shared.scrollVelocityThreshold {
+            DispatchQueue.main.async {
+              self.scrollToOffset()
+            }
           }
         }
       }
@@ -189,12 +191,11 @@ extension Organizer {
        */
       if !self.disableMagneticScroll {
         generateSelectedFeedback()
-        print("Scrolling to Block ID: \(block.id)")
         scrollProxy.scrollTo(block.id, anchor: self.anchor)
         self.activeBlock = block
         
         self.disableMagneticScroll = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.39) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + MagneticScrollConfiguration.shared.timeoutNeeded) {
           self.disableMagneticScroll = false
         }
       }
