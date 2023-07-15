@@ -108,9 +108,8 @@ import OrderedCollections
   
   /**
    Replaces the given block with a new block in the `Organizer`.
-   - Parameters:
-   - block: The block to replace.
-   - newBlock: The new block to insert.
+   - Parameter  block: The block to replace.
+   - Parameter newBlock: The new block to insert.
    */
   func replace(block: MagneticBlock, with newBlock: MagneticBlock) {
     guard let blockIndex = blocks.firstIndex(of: block) else { return }
@@ -178,7 +177,6 @@ import OrderedCollections
       .store(in: &cancellables)
   }
 }
-
 
 // MARK: - Scroll Handler
 extension Organizer {
@@ -267,7 +265,7 @@ extension Organizer {
             return
           }
           
-          let previousBlock = blocksToActiveBlock[index + 1]
+          let previousBlock = blocksToActivateBlock[index + 1]
           let absoluteOffset = previousBlock.height * -1
           
           if nonActivatedOffset < (scrolledOffset + absoluteOffset) {

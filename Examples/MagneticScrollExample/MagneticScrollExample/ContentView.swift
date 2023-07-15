@@ -106,10 +106,6 @@ struct SingleBlocksView: View {
       .velocityThreshold(1.0)
     }
   }
-  
-  func viewBounds() -> CGRect {
-    return UIScreen.main.bounds
-  }
 }
 
 struct ContentView_Previews: PreviewProvider {
