@@ -258,7 +258,7 @@ extension Organizer {
       if nonActivatedOffset < (-1 * (activeBlock!.height / 2)) {
         var scrolledOffset: CGFloat = 0.0
         
-        let blocksToActivateBlock = blocksToActiveBlock.reversed()
+        let blocksToActivateBlock: [MagneticBlock] = blocksToActiveBlock.reversed()
         for (index, block) in blocksToActivateBlock.enumerated() {
           if index == blocksToActivateBlock.count - 1 {
             self.scrollTo(block: block)
