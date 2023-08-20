@@ -270,9 +270,7 @@ extension Organizer {
           else {
             if scrolledOffset > 0.0 {
               let centerOfPreviousBlock = previousBlock.height / 2
-              print("CENTER OF PREVIOUS BLOCK: \(centerOfPreviousBlock)")
               let centerOfBlock = block.height / 2
-              print("CENTER OF BLOCK: \(centerOfBlock)")
               
               if absoluteOffset + centerOfPreviousBlock < absoluteOffset + centerOfBlock {
                 self.scrollTo(block: previousBlock)
