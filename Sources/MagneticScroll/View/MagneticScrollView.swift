@@ -10,31 +10,39 @@ import SwiftUI
 /** A scroll view that organizes `Block`s that's been passed to it.
  */
 public struct MagneticScrollView<Content>: View where Content: View {
+  
   // MARK: - Properties
+  
   var spacing: CGFloat = 8
   
   /// Anchor that's used to scroll the blocks
   var anchor: UnitPoint = .center
   
+  /// Whether the ScvrollView should show indicators.
+  var showsIndicators: Bool = false
+  
   /// The currently active block's ID
   @Binding var activeBlock: Block.ID
   
   // MARK: - Views
+  
   private var content: Content
   
   // MARK: - Private Properties
+  
   @StateObject private var organizer : Organizer
+  @ObservedObject private var configuration = MagneticScrollConfiguration()
   
   public var body: some View {
     GeometryReader { proxy in
       ScrollViewReader { scrollViewProxy in
-        OffsetObservingScrollView(offset: $organizer.scrollViewOffset) {
+        OffsetObservingScrollView(showsIndicators: showsIndicators, offset: $organizer.scrollViewOffset) {
           VStack(spacing: organizer.spacing) {
             content
           }
         }
         .onAppear {
-          organizer.prepare(with: scrollViewProxy)
+          organizer.prepare(with: scrollViewProxy, configuration: configuration)
         }
         .onChange(of: activeBlock) { newValue in
           organizer.activate(with: newValue)
@@ -46,9 +54,9 @@ public struct MagneticScrollView<Content>: View where Content: View {
           }
         }
       }
-
     }
     .environmentObject(organizer)
+    .environmentObject(configuration)
   }
   
   // MARK: - Initalizers
@@ -82,22 +90,22 @@ public extension MagneticScrollView {
    - Returns: The `MagneticScrollView` instance with the updated configuration.
    */
   func changesActiveBlockOnTapGesture(_ value: Bool = true) -> MagneticScrollView {
-    MagneticScrollConfiguration.shared.changesActiveBlockOnTapGesture = value
+    configuration.changesActiveBlockOnTapGesture = value
     return self
   }
   
   /**
-   Sets the velocity threshold for `MagneticScrollView` to react to scroll view velocity.
+   Sets the velocity threshold for `MagneticScrollView` to react to scroll view velocity, if you get a junky behavior from `MagneticScrollView`, play with this value.
    
    - Parameters:
-     - threshold: A double value representing the scroll velocity threshold.
+     - threshold: A `Double` value representing the scroll velocity threshold.
                   Higher values result in faster scrolling to the calculated block,
-                  while lower values result in slower scrolling to the calculated block.
+                  while lower values result in slower scrolling to the calculated block. By default, it is 0.9.
    
    - Returns: The `MagneticScrollView` instance with the updated configuration.
    */
   func velocityThreshold(_ threshold: Double) -> MagneticScrollView {
-    MagneticScrollConfiguration.shared.scrollVelocityThreshold = threshold
+    configuration.scrollVelocityThreshold = threshold
     return self
   }
   
@@ -110,7 +118,7 @@ public extension MagneticScrollView {
    - Returns: The `MagneticScrollView` instance with the updated configuration.
    */
   func triggersHapticFeedbackOnBlockChange(_ bool: Bool = true) -> MagneticScrollView {
-    MagneticScrollConfiguration.shared.triggersHapticFeedbackOnBlockChange = bool
+    configuration.triggersHapticFeedbackOnBlockChange = bool
     return self
   }
   
@@ -124,7 +132,7 @@ public extension MagneticScrollView {
    - Returns: The `MagneticScrollView` instance with the updated configuration.
    */
   func triggersHapticFeedbackOnActiveBlockChange(_ bool: Bool = true) -> MagneticScrollView {
-    MagneticScrollConfiguration.shared.triggersHapticFeedbackOnActiveBlockChange = bool
+    configuration.triggersHapticFeedbackOnActiveBlockChange = bool
     return self
   }
  
@@ -134,7 +142,7 @@ public extension MagneticScrollView {
    The `formStyle` configuration allows you to change the blocks by tapping when scrolling but not when not scrolling.
    */
   func formStyle(_ bool: Bool = true) -> MagneticScrollView {
-    MagneticScrollConfiguration.shared.formStyle = bool
+    configuration.formStyle = bool
     return self
   }
   
@@ -147,7 +155,7 @@ public extension MagneticScrollView {
    - Returns: The `MagneticScrollView` instance with the updated configuration.
    */
   func scrollAnimationDuration(_ duration: Double) -> MagneticScrollView {
-    MagneticScrollConfiguration.shared.scrollAnimationDuration = duration
+    configuration.scrollAnimationDuration = duration
     return self
   }
   
@@ -160,7 +168,7 @@ public extension MagneticScrollView {
    - Returns: The `MagneticScrollView` instance with the updated configuration.
    */
   func setTimeout(_ duration: Double) -> MagneticScrollView {
-    MagneticScrollConfiguration.shared.timeoutNeeded = duration
+    configuration.timeoutNeeded = duration
     return self
   }
 }

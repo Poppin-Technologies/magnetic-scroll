@@ -17,8 +17,8 @@ public struct Block<Content>: View where Content: View {
   
   // MARK: - Organizer
   
-  /// Organizer that is supplied by MagneticScrollView
   @EnvironmentObject var organizer: Organizer
+  @EnvironmentObject var configuration: MagneticScrollConfiguration
   
   // MARK: - State
   
@@ -80,8 +80,8 @@ public struct Block<Content>: View where Content: View {
     .simultaneousGesture(
       TapGesture()
         .onEnded {
-          if MagneticScrollConfiguration.shared.changesActiveBlockOnTapGesture {
-            if MagneticScrollConfiguration.shared.formStyle && !organizer.isScrolling { return }
+          if configuration.changesActiveBlockOnTapGesture {
+            if configuration.formStyle && !organizer.isScrolling { return }
             organizer.activeBlock = magneticBlock
             organizer.scrollTo(block: magneticBlock)
           }

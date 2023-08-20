@@ -39,6 +39,7 @@ import OrderedCollections
   private var previousOffset: CGFloat = 0.0
   private var scrollIndex = 0
   private var activeHapticBlock: MagneticBlock? = nil
+  private var configuration: MagneticScrollConfiguration?
   
   var blocksToActiveBlock : [MagneticBlock] {
     guard let activeBlock = activeBlock else { return [] }
@@ -80,8 +81,9 @@ import OrderedCollections
    Prepares the `Organizer` with the given `ScrollViewProxy`.
    - Parameter proxy: The `ScrollViewProxy` to prepare with.
    */
-  func prepare(with proxy: ScrollViewProxy) {
+  func prepare(with proxy: ScrollViewProxy, configuration: MagneticScrollConfiguration) {
     self.proxy = proxy
+    self.configuration = configuration
   }
   
   /**
@@ -148,7 +150,7 @@ import OrderedCollections
       }
       
       self.scrollIndex = (self.scrollIndex + 1) % 10
-      if MagneticScrollConfiguration.shared.triggersHapticFeedbackOnBlockChange {
+      if configuration?.triggersHapticFeedbackOnBlockChange == true {
         self.triggerHapticFeedbackOnBlockChange()
       }
     }
@@ -167,7 +169,7 @@ import OrderedCollections
           }
           
           let averageDifference = totalDifference / Double(array.count - 1)
-          if abs(averageDifference) <= MagneticScrollConfiguration.shared.scrollVelocityThreshold {
+          if abs(averageDifference) <= configuration?.scrollVelocityThreshold ?? 0.9 {
             DispatchQueue.main.async {
               self.scrollToOffset()
             }
@@ -188,14 +190,14 @@ extension Organizer {
        the reason is that when proxy.scrollTo gets triggered, the `scrollViewOffset` changes at the same time and this gets detected as a scroll behavior and this causes an infinite scroll loop
        */
       if !self.disableMagneticScroll {
-        if MagneticScrollConfiguration.shared.triggersHapticFeedbackOnActiveBlockChange {
+        if configuration?.triggersHapticFeedbackOnActiveBlockChange == true {
           generateSelectedFeedback()
         }
         scrollProxy.scrollTo(block.id, anchor: self.anchor)
         self.activeBlock = block
         
         self.disableMagneticScroll = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + MagneticScrollConfiguration.shared.timeoutNeeded) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + (configuration?.timeoutNeeded ?? 0.39)) {
           self.disableMagneticScroll = false
         }
       }
@@ -220,33 +222,27 @@ extension Organizer {
       if nonActivatedOffset > (activeBlock!.height / 2) {
         let blocksFromActiveBlock = self.blocks(from: activeBlock)
         var scrolledOffset: CGFloat = 0.0
-        
         for (index, block) in blocksFromActiveBlock.enumerated() {
           if index == blocksFromActiveBlock.count - 1 {
             self.scrollTo(block: block)
             return
           }
           
-          let nextBlock = blocksFromActiveBlock[index]
-          let absoluteOffset = scrolledOffset + block.height
-          let shouldScroll = nonActivatedOffset <= (absoluteOffset)
+          let nextBlock = blocksFromActiveBlock[index + 1]
+          let offset = scrolledOffset + block.height
           
-          if shouldScroll {
-            if scrolledOffset > 0.0 {
-              let centerOfNextBlock = nextBlock.height / 2
-              let centerOfBlock = block.height / 2
-              
-              if absoluteOffset - centerOfNextBlock > absoluteOffset - centerOfBlock {
-                self.scrollTo(block: nextBlock)
-              }
-              else {
-                self.scrollTo(block: block)
-              }
+          if offset + nextBlock.height > nonActivatedOffset {
+            let distanceToCurrentBlock = nonActivatedOffset - offset
+            let distanceToNextBlock = (offset + block.height) - nonActivatedOffset
+            
+            if distanceToNextBlock < distanceToCurrentBlock {
+              self.scrollTo(block: nextBlock)
+              break
             }
             else {
               self.scrollTo(block: block)
+              break
             }
-            return
           }
           else {
             scrolledOffset += nextBlock.height
@@ -274,7 +270,9 @@ extension Organizer {
           else {
             if scrolledOffset > 0.0 {
               let centerOfPreviousBlock = previousBlock.height / 2
+              print("CENTER OF PREVIOUS BLOCK: \(centerOfPreviousBlock)")
               let centerOfBlock = block.height / 2
+              print("CENTER OF BLOCK: \(centerOfBlock)")
               
               if absoluteOffset + centerOfPreviousBlock < absoluteOffset + centerOfBlock {
                 self.scrollTo(block: previousBlock)

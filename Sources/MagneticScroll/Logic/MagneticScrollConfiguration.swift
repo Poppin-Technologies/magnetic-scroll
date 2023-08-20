@@ -10,28 +10,21 @@ import Foundation
 /**
  Configuration for `MagneticScrollView`
  */
-internal class MagneticScrollConfiguration {
+internal class MagneticScrollConfiguration: ObservableObject {
   /// If the `activeBlock` should be changed on tap gesture
-  var changesActiveBlockOnTapGesture: Bool = true
+  @Published var changesActiveBlockOnTapGesture: Bool = true
   /// Value that decides how `MagneticScrolLView` should react to `Velocity` of `ScrollView`
-  var scrollVelocityThreshold: Double = 0.9
+  @Published var scrollVelocityThreshold: Double = 0.9
   /// Determines whether haptic feedback should be triggered when any  block is scrolled.
-  var triggersHapticFeedbackOnBlockChange = true
+  @Published var triggersHapticFeedbackOnBlockChange = true
   /// The duration of the scroll animation when changing the active block.
-  var scrollAnimationDuration: Double = 0.35
+  @Published var scrollAnimationDuration: Double = 0.35
   /// Determines whether haptic feedback should be triggered when the active block changes.
-  var triggersHapticFeedbackOnActiveBlockChange = false
+  @Published var triggersHapticFeedbackOnActiveBlockChange = false
   /// If the form style should be enabled or not.
-  var formStyle = false
+  @Published var formStyle = false
   /// The timeout duration to change a block to another.
-  var timeoutNeeded: Double = 0.39
-  
-  /// Singleton
-  static let shared = MagneticScrollConfiguration()
-  
-  private init() {
-    
-  }
+  @Published var timeoutNeeded: Double = 0.39
 }
 
 
