@@ -42,3 +42,30 @@ As you scroll, when the `ScrollView`'s velocity is lesser than `MagneticScrollVi
 ![geometry](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/d0f629f1-04d4-4874-be00-41583129b093)
 
 ## Usage
+```swift 
+import SwiftUI
+import MagneticScroll
+
+struct ContentView: View {
+  // If you were to set activeBlock to "second" or "first" manually, MagneticScroll would automatically scroll to the block with that id.
+  @State private var activeBlock = "first"
+  var body: some View {
+    MagneticScrollView(activeBlock: $activeBlock) {
+      Block(id: "first", height: 400, inActiveHeight: 300) { // All of these fields are optional, except the ID, but magnetic scroll works x5 better with constant heights.
+        Text("Hello World")
+      }
+      Block(id: "second", height: 400, inActiveHeight: 300) {
+        Text("Hello World")
+      }
+    }
+  }
+}
+```
+
+### Apps Using MagneticScroll
+
+[Poppin](https://apps.apple.com/us/app/poppin-the-party-platform/id1573674111) - The Party Platform 
+
+<a href="https://joinpoppin.com/">
+  <img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/7c83a740-1d7e-42a7-b5ec-5fc737a231c0" height="300" alt="Poppin">
+</a>
