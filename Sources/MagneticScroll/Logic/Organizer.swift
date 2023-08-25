@@ -1,5 +1,5 @@
 //
-//  Organizer.swift
+//  MagneticOrganizer.swift
 //
 //
 //  Created by Demirhan Mehmet Atabey on 29.06.2023.
@@ -9,9 +9,9 @@ import SwiftUI
 import Combine
 import OrderedCollections
 
-/// Organizer to control `Block`s. Supplied by `MagneticScrollView` to all subviews.
+/// MagneticOrganizer to control `Block`s. Supplied by `MagneticScrollView` to all subviews.
 @available(iOS 14.0, *)
-@MainActor internal class Organizer: ObservableObject {
+@MainActor public class MagneticOrganizer: ObservableObject {
   
   // MARK: Wrapped Properties
   
@@ -60,28 +60,28 @@ import OrderedCollections
   
   // MARK: - Initializers
   
-  /// Initializes the `Organizer`.
+  /// Initializes the `MagneticOrganizer`.
   /// - Parameters:
   ///   - spacing: The spacing between blocks. Default value is 8.
   ///   - anchor: The anchor point that blocks will use. Default value is `.center`.
-  init(spacing: CGFloat, anchor: UnitPoint) {
+  internal init(spacing: CGFloat, anchor: UnitPoint) {
     self.spacing = spacing
     self.anchor = anchor
     self.setupPublishers()
   }
   
-  /** Feeds the `Organizer` with the given `MagneticBlock`.
+  /** Feeds the `MagneticOrganizer` with the given `MagneticBlock`.
    - Parameter block: The `MagneticBlock` to feed to the organizer.
    */
-  func feed(with block: MagneticBlock) {
+  internal func feed(with block: MagneticBlock) {
     blocks.updateOrInsert(block, at: 0)
   }
   
   /**
-   Prepares the `Organizer` with the given `ScrollViewProxy`.
+   Prepares the `MagneticOrganizer` with the given `ScrollViewProxy`.
    - Parameter proxy: The `ScrollViewProxy` to prepare with.
    */
-  func prepare(with proxy: ScrollViewProxy, configuration: MagneticScrollConfiguration) {
+  internal func prepare(with proxy: ScrollViewProxy, configuration: MagneticScrollConfiguration) {
     self.proxy = proxy
     self.configuration = configuration
   }
@@ -90,17 +90,21 @@ import OrderedCollections
    Activates the block with the specified ID.
    - Parameter id: The ID of the block to activate.
    */
-  func activate(with id: Block.ID) {
-    guard let block = blocks.first(where: { $0.id == id }) else { return }
+  public func activate(with id: Block.ID) {
+    guard let block = self.block(with: id) else { return }
     
     self.scrollTo(block: block)
   }
   
+  internal func block(with id: String) -> MagneticBlock? {
+     return blocks.first(where: { $0.id == id })
+  }
+  
   /**
-   Updates the given block in the `Organizer`.
+   Updates the given block in the `MagneticOrganizer`.
    - Parameter block: The block to update.
    */
-  func update(block: MagneticBlock) {
+  internal func update(block: MagneticBlock) {
     if let blockIndex = blocks.firstIndex(of: block) {
       blocks.update(block, at: blockIndex)
     } else {
@@ -109,11 +113,11 @@ import OrderedCollections
   }
   
   /**
-   Replaces the given block with a new block in the `Organizer`.
+   Replaces the given block with a new block in the `MagneticOrganizer`.
    - Parameter  block: The block to replace.
    - Parameter newBlock: The new block to insert.
    */
-  func replace(block: MagneticBlock, with newBlock: MagneticBlock) {
+  internal func replace(block: MagneticBlock, with newBlock: MagneticBlock) {
     guard let blockIndex = blocks.firstIndex(of: block) else { return }
     
     blocks.remove(at: blockIndex)
@@ -171,7 +175,7 @@ import OrderedCollections
           let averageDifference = totalDifference / Double(array.count - 1)
           if abs(averageDifference) <= configuration?.scrollVelocityThreshold ?? 0.9 {
             DispatchQueue.main.async {
-              self.scrollToOffset()
+              self.scrollToCurrentOffset()
             }
           }
         }
@@ -181,8 +185,8 @@ import OrderedCollections
 }
 
 // MARK: - Scroll Handler
-extension Organizer {
-  func scrollTo(block: MagneticBlock) {
+extension MagneticOrganizer {
+  internal func scrollTo(block: MagneticBlock, anchor: UnitPoint? = nil) {
     guard let scrollProxy = proxy else { return }
     withAnimation {
       /**
@@ -193,7 +197,7 @@ extension Organizer {
         if configuration?.triggersHapticFeedbackOnActiveBlockChange == true {
           generateSelectedFeedback()
         }
-        scrollProxy.scrollTo(block.id, anchor: self.anchor)
+        scrollProxy.scrollTo(block.id, anchor: anchor != nil ? anchor! : self.anchor)
         self.activeBlock = block
         
         self.disableMagneticScroll = true
@@ -203,11 +207,20 @@ extension Organizer {
       }
     }
   }
+  
+  /// Scrolls to the block matching with the given `id`
+  public func scrollTo(id: Block.ID, anchor: UnitPoint = .top) {
+    guard let block = self.block(with: id) else {
+      print("Block with: \(id) can not found, no scrolling happens.")
+      return
+    }
+    self.scrollTo(block: block, anchor: anchor)
+  }
 }
 
 // MARK: - Activation Handler
-extension Organizer {
-  func scrollToOffset() {
+extension MagneticOrganizer {
+  public func scrollToCurrentOffset() {
     guard blocks.count > 0 else { return }
     
     if activeBlock == nil {
@@ -292,8 +305,7 @@ extension Organizer {
   }
 }
 
-
-extension Organizer {
+extension MagneticOrganizer {
   func triggerHapticFeedbackOnBlockChange() {
     if activeHapticBlock == nil {
       self.activeHapticBlock = activeBlock
@@ -332,7 +344,7 @@ extension Organizer {
 
 // MARK: - View Extensions
 
-extension Organizer {
+extension MagneticOrganizer {
   func blocks(from block: MagneticBlock?) -> [MagneticBlock] {
     guard let block = block else { return [] }
     guard let indexOfBlock = blocks.firstIndex(of: block), indexOfBlock != blocks.count - 1 else { return [] }

@@ -15,9 +15,7 @@ import SwiftUI
 @available(iOS 14.0, *)
 public struct Block<Content>: View where Content: View {
   
-  // MARK: - Organizer
-  
-  @EnvironmentObject var organizer: Organizer
+  @EnvironmentObject var organizer: MagneticOrganizer
   @EnvironmentObject var configuration: MagneticScrollConfiguration
   
   // MARK: - State

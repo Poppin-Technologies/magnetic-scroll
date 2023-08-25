@@ -24,34 +24,36 @@ public struct MagneticScrollView<Content>: View where Content: View {
   /// The currently active block's ID
   @Binding var activeBlock: Block.ID
   
+  /// Optional proxy supplied to the `MagneticScrollView`, if empty, magneticscroll will automatically create a scrollViewProxy.
+  var proxy: ScrollViewProxy?
+  
   // MARK: - Views
   
-  private var content: Content
+  private var content: (MagneticOrganizer) -> Content
   
   // MARK: - Private Properties
   
-  @StateObject private var organizer : Organizer
+  @StateObject private var organizer: MagneticOrganizer
   @ObservedObject private var configuration = MagneticScrollConfiguration()
   
+  @ViewBuilder
   public var body: some View {
-    GeometryReader { proxy in
-      ScrollViewReader { scrollViewProxy in
-        OffsetObservingScrollView(showsIndicators: showsIndicators, offset: $organizer.scrollViewOffset) {
-          VStack(spacing: organizer.spacing) {
-            content
-          }
+    OptionalScrollViewReader(proxy: proxy) { scrollViewProxy in
+      OffsetObservingScrollView(showsIndicators: showsIndicators, offset: $organizer.scrollViewOffset) {
+        VStack(spacing: organizer.spacing) {
+          content(organizer)
         }
-        .onAppear {
-          organizer.prepare(with: scrollViewProxy, configuration: configuration)
-        }
-        .onChange(of: activeBlock) { newValue in
-          organizer.activate(with: newValue)
-        }
-        .onChange(of: organizer.activeBlock) { block in
-          guard let block = block else { return }
-          if activeBlock != organizer.activeBlock?.id {
-            activeBlock = block.id
-          }
+      }
+      .onAppear {
+        organizer.prepare(with: scrollViewProxy, configuration: configuration)
+      }
+      .onChange(of: activeBlock) { newValue in
+        organizer.activate(with: newValue)
+      }
+      .onChange(of: organizer.activeBlock) { block in
+        guard let block = block else { return }
+        if activeBlock != organizer.activeBlock?.id {
+          activeBlock = block.id
         }
       }
     }
@@ -65,17 +67,40 @@ public struct MagneticScrollView<Content>: View where Content: View {
    - Parameter activeBlock: A binding to the currently active block's ID.
    - Parameter body: A closure returning the content of the scroll view.
    */
-  public init(spacing: CGFloat = 10, anchor: UnitPoint = .center, activeBlock: Binding<Block.ID>, @ViewBuilder body: @escaping () -> Content) {
-    self.content = body()
+  public init(
+    spacing: CGFloat = 10,
+    anchor: UnitPoint = .center,
+    proxy: ScrollViewProxy? = nil,
+    activeBlock: Binding<Block.ID>,
+    @ViewBuilder content: @escaping (MagneticOrganizer) -> Content
+  ) {
+    self.content = content
     self.spacing = spacing
     self.anchor = anchor
+    self.proxy = proxy
     
     // Initialize Bindings
     self._activeBlock = activeBlock
-    self._organizer = StateObject(wrappedValue: Organizer(spacing: spacing, anchor: anchor))
+    self._organizer = StateObject(wrappedValue: MagneticOrganizer(spacing: spacing, anchor: anchor))
   }
 }
 
+private struct OptionalScrollViewReader<Content: View>: View {
+  var proxy: ScrollViewProxy?
+  
+  @ViewBuilder var content: (ScrollViewProxy) -> Content
+  
+  @ViewBuilder
+  var body: some View {
+    if let proxy {
+      content(proxy)
+    } else {
+      ScrollViewReader { scrollViewProxy in
+        content(scrollViewProxy)
+      }
+    }
+  }
+}
 
 
 // MARK: - View Extensions

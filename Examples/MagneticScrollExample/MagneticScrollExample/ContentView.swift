@@ -24,69 +24,71 @@ struct MultipleBlocksView: View {
   let color = Color(red: 0.48, green: 0.24, blue: 0.75)
   
   var body: some View {
-    MagneticScrollView(activeBlock: $activeBlock) {
-      ForEach(ids, id: \.self) { id in
-        Block(id: id, height: 600, inActiveHeight: 450) {
-          VStack(spacing: 10.0) {
-            if activeBlock == id {
-              Text("This is a header")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(color)
-                .frame(maxWidth: .infinity, alignment: .center)
-//                .matchedGeometryEffect(id: "Header", in: MagneticBlockNameSpace)
-            }
-            Spacer()
-            TextField("Input info here", text: .constant(""), onCommit: {
-              // Next block
-            })
-            .padding()
-            .border(.black)
-            .background(Color.init(white: 0.05))
-            .cornerRadius(16)
-            Spacer()
-
-            if activeBlock == id {
-              VStack {
-                Text("This is secondary info").opacity(0.5)
-                Button("Prev Block") {
-                  let i = ids.firstIndex(of: activeBlock)!
-                  self.activeBlock = ids[i - 1]
-                }
-                .disabled(ids.firstIndex(of: activeBlock)! == 0)
-                Button("Next Block") {
-                  let i = ids.firstIndex(of: activeBlock)!
-                  self.activeBlock = ids[i + 1]
-                }
-                .disabled(ids.firstIndex(of: activeBlock)! == ids.count - 1)
+    ScrollViewReader { proxy in
+      MagneticScrollView(activeBlock: $activeBlock) { organizer in
+        ForEach(ids, id: \.self) { id in
+          Block(id: id, height: 600, inActiveHeight: 450) {
+            VStack(spacing: 10.0) {
+              if activeBlock == id {
+                Text("This is a header")
+                  .font(.title2)
+                  .fontWeight(.bold)
+                  .foregroundColor(color)
+                  .frame(maxWidth: .infinity, alignment: .center)
+                //                .matchedGeometryEffect(id: "Header", in: MagneticBlockNameSpace)
               }
-//              .matchedGeometryEffect(id: "Content", in: MagneticBlockNameSpace)
-
+              Spacer()
+              TextField("Input info here", text: .constant(""), onCommit: {
+                // Next block
+              })
+              .padding()
+              .border(.black)
+              .background(Color.init(white: 0.05))
+              .cornerRadius(16)
+              Spacer()
+              
+              if activeBlock == id {
+                VStack {
+                  Text("This is secondary info").opacity(0.5)
+                  Button("Prev Block") {
+                    let i = ids.firstIndex(of: activeBlock)!
+                    self.activeBlock = ids[i - 1]
+                  }
+                  .disabled(ids.firstIndex(of: activeBlock)! == 0)
+                  Button("Next Block") {
+                    let i = ids.firstIndex(of: activeBlock)!
+                    self.activeBlock = ids[i + 1]
+                  }
+                  .disabled(ids.firstIndex(of: activeBlock)! == ids.count - 1)
+                }
+                //              .matchedGeometryEffect(id: "Content", in: MagneticBlockNameSpace)
+                
+              }
+            }
+            .padding()
+          }
+          .frame(maxWidth: .infinity)
+          .background(Color(.systemGray6))
+          .cornerRadius(16)
+          .overlay {
+            Group {
+              if activeBlock == id {
+                RoundedRectangle(cornerRadius: 16)
+                  .stroke(lineWidth: 1)
+                  .foregroundColor(color)
+              }
             }
           }
-          .padding()
+          .padding(1)
+          .animation(.spring(response: 0.3, dampingFraction: 1.2), value: activeBlock)
         }
-        .frame(maxWidth: .infinity)
-        .background(Color(.systemGray6))
-        .cornerRadius(16)
-        .overlay {
-          Group {
-            if activeBlock == id {
-              RoundedRectangle(cornerRadius: 16)
-                .stroke(lineWidth: 1)
-                .foregroundColor(color)
-            }
-          }
-        }
-        .padding(1)
-        .animation(.spring(response: 0.3, dampingFraction: 1.2), value: activeBlock)
       }
+      .formStyle()
+      .setTimeout(0.20)
+      .padding(.horizontal)
+      .background(Color.black)
+      .preferredColorScheme(.dark)
     }
-    .formStyle()
-    .setTimeout(0.20)
-    .padding(.horizontal)
-    .background(Color.black)
-    .preferredColorScheme(.dark)
   }
 }
 
@@ -101,7 +103,7 @@ struct SingleBlocksView: View {
   @State private var height: CGFloat = 200
   var body: some View {
     VStack {
-      MagneticScrollView(activeBlock: $activeBlock) {
+      MagneticScrollView(activeBlock: $activeBlock) { organizer in
         Block(id: "scroll field", height: 400, inActiveHeight: 600) {
           Button("Scroll To Bottom") {
             activeBlock = "Fifth"
