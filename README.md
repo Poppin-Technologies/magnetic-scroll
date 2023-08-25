@@ -31,7 +31,7 @@ https://github.com/Poppin-Technologies/magnetic-scroll.git
 
 ## Showcase
 ### Regular Magnetic Scroll
-As you scroll, when the `ScrollView`'s velocity is lesser than `MagneticScrollView`'s velocity, magnetic scroll automatically sticks top the predicted end location.
+As you scroll, when the `ScrollView`'s velocity is lesser than `MagneticScrollView`'s velocity, magnetic scroll automatically sticks to the predicted end location.
 
 ![regular](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/838e1403-f0b1-4289-a4f3-24925377fe15)
 
