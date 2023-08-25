@@ -1,7 +1,7 @@
 ![Magnetic Scroll](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/6586829c-e9a2-4e3f-bf58-73bbf3ad3a1c)
 
 # MagneticScroll
-A Library that adds a sticky behavior to the `SwiftUI`'s `ScrollView`, while triggering a smooth feedback as you scroll through the magnetic blocks.
+A Library that adds a sticky behavior to the `SwiftUI`'s `ScrollView`, while triggering a smooth feedback as you scroll through the views.
 
 <h3 style ="text-align: center">Installation</h3> 
 <p>Requires <b>iOS 14.0+</b> 
