@@ -31,11 +31,14 @@ import OrderedCollections
   var anchor: UnitPoint
   
   var disableMagneticScroll: Bool = false
+
+  /// The proxy of the magnetic scroll view.
+  public var proxy: ScrollViewProxy? = nil
+
   
   // MARK: - Private variables
   
   private var cancellables = Set<AnyCancellable>()
-  private var proxy: ScrollViewProxy? = nil
   private var previousOffset: CGFloat = 0.0
   private var scrollIndex = 0
   private var activeHapticBlock: MagneticBlock? = nil
