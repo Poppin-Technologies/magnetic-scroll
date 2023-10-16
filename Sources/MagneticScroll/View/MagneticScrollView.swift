@@ -37,7 +37,7 @@ public struct MagneticScrollView<Content>: View where Content: View {
   public var body: some View {
     ScrollViewReader { scrollViewProxy in
       OffsetObservingScrollView(showsIndicators: showsIndicators, offset: $organizer.scrollViewOffset) {
-        LazyVStack(spacing: organizer.spacing) {
+        VStack(spacing: organizer.spacing) {
           content(organizer)
         }
       }
