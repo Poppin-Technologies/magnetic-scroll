@@ -1,6 +1,6 @@
-![Magnetic Scroll](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/6586829c-e9a2-4e3f-bf58-73bbf3ad3a1c)
-
+![Magnetic Scroll](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/f6c7b963-39da-4497-8e0c-cfc06d973f40)
 # MagneticScroll
+
 A Library that adds a sticky behavior to the `SwiftUI`'s `ScrollView`, while triggering a smooth haptic feedback as you scroll through the views.
 
 <h3 style ="text-align: center">Installation</h3> 
