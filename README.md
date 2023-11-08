@@ -93,8 +93,5 @@ Scrolls to the nearest block with the current offset of the `MagneticScrollView`
 ## Apps Using MagneticScroll
 
 #### [Poppin](https://apps.apple.com/us/app/poppin-the-party-platform/id1573674111) - The Party Platform 
-<a href="https://joinpoppin.com/">
-  <img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/7c83a740-1d7e-42a7-b5ec-5fc737a231c0" height="300" alt="Poppin">
-</a>
-
-# ![poppin](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/5a68d563-d1ec-4cb4-af35-781243e48e1e)
+### ![logoppin](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/874e990f-fc80-43fb-b14f-a488faecaaa3)
+![poppin](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/849d6a8e-019c-4739-8c8a-fb6f29d62fed)
