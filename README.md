@@ -61,6 +61,25 @@ struct ContentView: View {
   }
 }
 ```
+## Methods
+
+Here are the methods available for configuring the behavior of `MagneticScrollView` with emojis:
+
+### 🖱️ changesActiveBlockOnTapGesture(_ value: Bool)
+Sets whether the active block should be changed on a tap gesture.
+### 🏁 velocityThreshold(_ threshold: Double)
+Sets the velocity threshold for `MagneticScrollView` to react to scroll view velocity.
+### 📳 triggersHapticFeedbackOnBlockChange(_ bool: Bool)
+Sets whether haptic feedback should be triggered when the active block changes.
+### 📳 triggersHapticFeedbackOnActiveBlockChange(_ bool: Bool)
+Sets whether haptic feedback should be triggered when the active block changes.
+### 📋 formStyle(_ bool:)
+Sets whether the form style should be enabled or not.
+### ⏳ scrollAnimationDuration(_ duration: Double)
+Sets the scroll animation duration when changing the active block.
+### ⌛ setTimeout(_ duration: Double)
+Sets the timeout duration needed to change a block to another.
+
 ## Organizer
 `MagneticScrollView` gives an organizer to control the behavior of itself. Organizer contains a `ScrollViewProxy` so if you want to control the `ScrollView` itself, you can use that.
 ### 🪐 activate(with: Block.ID)
