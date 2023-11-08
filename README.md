@@ -71,7 +71,7 @@ Scrolls and activates a block with given id and anchor
 Scrolls to the nearest block with the current offset of the `MagneticScrollView`.
 
 
-### Apps Using MagneticScroll
+## Apps Using MagneticScroll
 
 #### [Poppin](https://apps.apple.com/us/app/poppin-the-party-platform/id1573674111) - The Party Platform 
 <a href="https://joinpoppin.com/">
