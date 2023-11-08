@@ -63,7 +63,7 @@ struct ContentView: View {
 ```
 ## Methods
 
-Here are the methods available for configuring the behavior of `MagneticScrollView` with emojis:
+Here are the methods available for configuring the behavior of `MagneticScrollView`:
 
 ### 🖱️ changesActiveBlockOnTapGesture(_ value: Bool)
 Sets whether the active block should be changed on a tap gesture.
