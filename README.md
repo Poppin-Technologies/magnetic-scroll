@@ -1,4 +1,4 @@
-![Magnetic Scroll](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/f6c7b963-39da-4497-8e0c-cfc06d973f40)
+![thumbnail](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/25a6beb9-f661-4806-847a-3789dc960d7a)
 # MagneticScroll
 
 A Library that adds a sticky behavior to the `SwiftUI`'s `ScrollView`, while triggering a smooth haptic feedback as you scroll through the views.
@@ -33,13 +33,14 @@ https://github.com/Poppin-Technologies/magnetic-scroll.git
 ### ⚛️ Regular Magnetic Scroll
 As you scroll, when the `ScrollView`'s velocity is lesser than `MagneticScrollView`'s velocity, magnetic scroll automatically sticks to the predicted end location.
 
-![regular](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/838e1403-f0b1-4289-a4f3-24925377fe15)
+![regular](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/a6105c9b-ea59-42aa-9091-b6a5097ae47d)
 
 ### ✨ Manually changing the blocks
-![manual](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/1a83b124-3b1f-4108-a483-515d2e6b09f3)
+![manual](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/01df66a2-9d39-48f5-9e02-c0a1ec9266af)
+
 
 ### 🙌 Magnetic Scroll with `.matchedGeometryEffect` modifier
-![geometry](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/d0f629f1-04d4-4874-be00-41583129b093)
+![matchedGeometryEffect](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/f694f466-e17e-472f-a955-c0d762584fba)
 
 ## Usage
 ```swift 
@@ -93,5 +94,4 @@ Scrolls to the nearest block with the current offset of the `MagneticScrollView`
 ## Apps Using MagneticScroll
 
 #### [Poppin](https://apps.apple.com/us/app/poppin-the-party-platform/id1573674111) - The Party Platform 
-### ![logoppin](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/874e990f-fc80-43fb-b14f-a488faecaaa3)
-![poppin](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/849d6a8e-019c-4739-8c8a-fb6f29d62fed)
+### ![logoppin](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/f7cb683f-131d-4fbd-ab32-0dc00d4f8e75)
