@@ -33,14 +33,13 @@ https://github.com/Poppin-Technologies/magnetic-scroll.git
 ### ⚛️ Regular Magnetic Scroll
 As you scroll, when the `ScrollView`'s velocity is lesser than `MagneticScrollView`'s velocity, magnetic scroll automatically sticks to the predicted end location.
 
-![regular](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/a6105c9b-ea59-42aa-9091-b6a5097ae47d)
+<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/a6105c9b-ea59-42aa-9091-b6a5097ae47d" alt="regular" height=700 />
 
 ### ✨ Manually changing the blocks
-![manual](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/01df66a2-9d39-48f5-9e02-c0a1ec9266af)
-
+<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/01df66a2-9d39-48f5-9e02-c0a1ec9266af" alt="manual" height=700 />
 
 ### 🙌 Magnetic Scroll with `.matchedGeometryEffect` modifier
-![matchedGeometryEffect](https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/f694f466-e17e-472f-a955-c0d762584fba)
+<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/f694f466-e17e-472f-a955-c0d762584fba" alt="manual" height=700 />
 
 ## Usage
 ```swift 
