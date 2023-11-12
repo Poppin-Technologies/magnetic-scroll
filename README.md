@@ -33,13 +33,18 @@ https://github.com/Poppin-Technologies/magnetic-scroll.git
 ### ⚛️ Regular Magnetic Scroll
 As you scroll, when the `ScrollView`'s velocity is lesser than `MagneticScrollView`'s velocity, magnetic scroll automatically sticks to the predicted end location.
 
-<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/a6105c9b-ea59-42aa-9091-b6a5097ae47d" alt="regular" height=700 />
+<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/a6105c9b-ea59-42aa-9091-b6a5097ae47d" alt="regular" height=600 />
 
 ### ✨ Manually changing the blocks
-<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/01df66a2-9d39-48f5-9e02-c0a1ec9266af" alt="manual" height=700 />
+<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/01df66a2-9d39-48f5-9e02-c0a1ec9266af" alt="manual" height=600 />
 
 ### 🙌 Magnetic Scroll with `.matchedGeometryEffect` modifier
-<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/f694f466-e17e-472f-a955-c0d762584fba" alt="manual" height=700 />
+<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/f694f466-e17e-472f-a955-c0d762584fba" alt="mached" height=600 />
+
+### 🔥 MagneticCarousel
+If you set the `velocityThreshold` to `.infinity`, MagneticScroll becomes a carousel.
+
+<img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/feadbb7b-817d-48cd-9a27-469c46b6aacd" alt="carousel" height=600/ >
 
 ## Usage
 ```swift 
