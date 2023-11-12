@@ -47,6 +47,7 @@ If you set the `velocityThreshold` to `.infinity`, MagneticScroll becomes a caro
 <img src="https://github.com/Poppin-Technologies/magnetic-scroll/assets/69051988/feadbb7b-817d-48cd-9a27-469c46b6aacd" alt="carousel" height=600/ >
 
 ## Usage
+MagneticScroll is designed to operate with a view called `Block`. For MagneticScroll to detect scroll changes, it requires your content to be wrapped within `Block` elements.
 ```swift 
 import SwiftUI
 import MagneticScroll
