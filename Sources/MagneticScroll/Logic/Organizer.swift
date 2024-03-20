@@ -251,7 +251,7 @@ extension MagneticOrganizer {
             let distanceToCurrentBlock = nonActivatedOffset - offset
             let distanceToNextBlock = (offset + block.height) - nonActivatedOffset
             
-            if distanceToNextBlock < distanceToCurrentBlock || distanceToNextBlock < configuration?.minimumSwipeThreshold ?? .greatestFiniteMagnitude {
+            if distanceToNextBlock < distanceToCurrentBlock || distanceToNextBlock > (configuration?.minimumSwipeThreshold ?? .greatestFiniteMagnitude) {
               self.scrollTo(block: nextBlock)
               break
             }
