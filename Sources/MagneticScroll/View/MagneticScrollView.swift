@@ -150,6 +150,16 @@ public extension MagneticScrollView {
   }
   
   /**
+   Sets whether the full screen style should be enabled or not.
+
+   The `fullScreenStyle` configuration smoothens the experience with blocks that cover the entire screen.
+   */
+  func fullScreenStyle(_ bool: Bool = true) -> MagneticScrollView {
+    configuration.fullPageStyle = bool
+    return self
+  }
+  
+  /**
    Sets the scroll animation duration when changing the active block.
    
    - Parameters:
@@ -172,6 +182,30 @@ public extension MagneticScrollView {
    */
   func setTimeout(_ duration: Double) -> MagneticScrollView {
     configuration.timeoutNeeded = duration
+    return self
+  }
+  /**
+   Changes the value that decides when magnetic scroll should start scrolling and disable swipe action. By default, this feature is disabled.
+   
+   - Parameters:
+     - threshold: A value that represents, if the swipe gesture is lesser than, view should snap to next iew .
+   
+   - Returns: The `MagneticScrollView` instance with the updated configuration.
+   */
+  func setMinimumSwipeThreshold(_ threshold: Double) -> MagneticScrollView {
+    configuration.minimumSwipeThreshold = threshold
+    return self
+  }
+  /**
+      Changes the value that decides, If the drag gesture is low enough, the view should snap back.
+   
+   - Parameters:
+     - threshold: A value that decides, If the drag gesture is low enough, the view should snap back.
+   
+   - Returns: The `MagneticScrollView` instance with the updated configuration.
+   */
+  func setMinimumSwipeCancelThreshold(_ threshold: Double) -> MagneticScrollView {
+    configuration.minimumSwipeCancelThreshold = threshold
     return self
   }
 }

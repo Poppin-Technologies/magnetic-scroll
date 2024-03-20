@@ -15,19 +15,19 @@ import OrderedCollections
   
   // MARK: Wrapped Properties
   
-  /// Blocks that's been passed to`MagneticScrollView`
+  /// Blocks that's been passed to`MagneticScrollView`.
   @Published var blocks: OrderedSet<MagneticBlock> = OrderedSet<MagneticBlock>()
-  /// `MagneticScrollView`s current offset
+  /// `MagneticScrollView`s current offset.
   @Published var scrollViewOffset: CGPoint = .zero
-  /// Current active block
+  /// Current active block.
   @Published var activeBlock: MagneticBlock? = nil
-  /// An array of `CGFloat` to calculate velocity of `MagneticScrollView`
+  /// An array of `CGFloat` to calculate velocity of `MagneticScrollView`.
   @Published var lastScrollValues: [CGFloat] = []
-  /// Whether or not `MagneticScrollView` is scrolling
+  /// Whether or not `MagneticScrollView` is scrolling.
   @Published var isScrolling = false
   
   var spacing: CGFloat
-  /// Anchor that blocks will use
+  /// Anchor that blocks will use.
   var anchor: UnitPoint
   
   var disableMagneticScroll: Bool = false
@@ -247,7 +247,7 @@ extension MagneticOrganizer {
           let nextBlock = blocksFromActiveBlock[index + 1]
           let offset = scrolledOffset + block.height
           
-          if offset + nextBlock.height > nonActivatedOffset {
+          if (offset * ((configuration?.fullPageStyle ?? false) ? 1.2 : 1)) + nextBlock.height > nonActivatedOffset {
             let distanceToCurrentBlock = nonActivatedOffset - offset
             let distanceToNextBlock = (offset + block.height) - nonActivatedOffset
             

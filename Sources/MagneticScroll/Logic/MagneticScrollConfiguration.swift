@@ -15,12 +15,18 @@ internal class MagneticScrollConfiguration: ObservableObject {
   @Published var changesActiveBlockOnTapGesture: Bool = true
   /// Value that decides how `MagneticScrolLView` should react to `Velocity` of `ScrollView`
   @Published var scrollVelocityThreshold: Double = 0.9
+  /// Value that decides when magnetic scroll should start scrolling and disable swipe action. By default, this feature is disabled.
+  @Published var minimumSwipeThreshold: Double = .greatestFiniteMagnitude
+   /// Value that decides if magnetic scroll should snap back when scrolled.
+  @Published var minimumSwipeCancelThreshold: Double = .greatestFiniteMagnitude
   /// Determines whether haptic feedback should be triggered when any  block is scrolled.
   @Published var triggersHapticFeedbackOnBlockChange = true
   /// The duration of the scroll animation when changing the active block.
   @Published var scrollAnimationDuration: Double = 0.35
   /// Determines whether haptic feedback should be triggered when the active block changes.
   @Published var triggersHapticFeedbackOnActiveBlockChange = false
+  /// Whether the full size should enabled or not.
+  @Published var fullPageStyle = false
   /// If the form style should be enabled or not.
   @Published var formStyle = false
   /// The timeout duration to change a block to another.
@@ -35,7 +41,9 @@ extension MagneticScrollConfiguration : Equatable {
       lhs.scrollVelocityThreshold == rhs.scrollVelocityThreshold &&
       lhs.triggersHapticFeedbackOnBlockChange == rhs.triggersHapticFeedbackOnBlockChange &&
       lhs.scrollAnimationDuration == rhs.scrollAnimationDuration &&
-      lhs.formStyle == rhs.formStyle
+      lhs.formStyle == rhs.formStyle &&
+      lhs.minimumSwipeThreshold == rhs.minimumSwipeThreshold &&
+      lhs.minimumSwipeCancelThreshold == rhs.minimumSwipeCancelThreshold
     )
   }
 }

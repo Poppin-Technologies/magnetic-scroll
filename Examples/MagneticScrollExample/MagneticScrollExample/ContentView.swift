@@ -27,7 +27,7 @@ struct MultipleBlocksView: View {
     ScrollViewReader { proxy in
       MagneticScrollView(activeBlock: $activeBlock) { organizer in
         ForEach(ids, id: \.self) { id in
-          Block(id: id, height: 600, inActiveHeight: 450) {
+          Block(id: id, height: 750, inActiveHeight: 750) {
             VStack(spacing: 10.0) {
               if activeBlock == id {
                 Text("This is a header")
@@ -83,6 +83,8 @@ struct MultipleBlocksView: View {
           .animation(.spring(response: 0.3, dampingFraction: 1.2), value: activeBlock)
         }
       }
+      .velocityThreshold(2.3)
+      .fullScreenStyle()
       .formStyle()
       .setTimeout(0.20)
       .padding(.horizontal)

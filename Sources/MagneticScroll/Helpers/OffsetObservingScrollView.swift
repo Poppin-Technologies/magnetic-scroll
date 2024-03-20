@@ -14,6 +14,7 @@ internal struct OffsetObservingScrollView<Content: View>: View {
     @Binding var offset: CGPoint
     @ViewBuilder var content: () -> Content
 
+    @EnvironmentObject var configuration: MagneticScrollConfiguration
     private let coordinateSpaceName = UUID()
 
     var body: some View {
@@ -34,7 +35,7 @@ internal struct OffsetObservingScrollView<Content: View>: View {
         }
         .coordinateSpace(name: coordinateSpaceName)
         .introspect(.scrollView, on: .iOS(.v14),.iOS(.v15), .iOS(.v16), .iOS(.v17)) { scrollView in
-          scrollView.setValue(0.35, forKeyPath: "contentOffsetAnimationDuration")
+          scrollView.setValue(configuration.fullPageStyle ? 0.45 : 0.35, forKeyPath: "contentOffsetAnimationDuration")
         }
     }
 }
