@@ -25,6 +25,8 @@ import OrderedCollections
   @Published var lastScrollValues: [CGFloat] = []
   /// Whether or not `MagneticScrollView` is scrolling
   @Published var isScrolling = false
+  /// Last change date.
+  @Published var lastChangeDate: Date = Date.distantFuture
   
   var spacing: CGFloat
   /// Anchor that blocks will use
@@ -156,12 +158,20 @@ import OrderedCollections
         self.lastScrollValues.append(point.y)
       }
       
-      self.scrollIndex = (self.scrollIndex + 1) % 10
+      self.scrollIndex = (self.scrollIndex + 1) % 20
       if configuration?.triggersHapticFeedbackOnBlockChange == true {
         self.triggerHapticFeedbackOnBlockChange()
       }
+      lastChangeDate = Date()
     }
     .store(in: &cancellables)
+    
+    $lastChangeDate 
+      .debounce(for: 0.3, scheduler: DispatchQueue.main)
+      .sink { d in
+        self.scrollToCurrentOffset()
+      }
+      .store(in: &cancellables)
     
     $lastScrollValues
       .sink { [weak self] array in
@@ -176,7 +186,9 @@ import OrderedCollections
           }
           
           let averageDifference = totalDifference / Double(array.count - 1)
+          print("AVG DIFF", averageDifference)
           if abs(averageDifference) <= configuration?.scrollVelocityThreshold ?? 0.9 {
+            print("SCROLLING")
             DispatchQueue.main.async {
               self.scrollToCurrentOffset()
             }
@@ -234,6 +246,7 @@ extension MagneticOrganizer {
     
     let nonActivatedOffset = (scrollViewOffset.y - offsetUntilActiveBlock)
     
+    print("OFFSEEET \(nonActivatedOffset)")
     if nonActivatedOffset > 0 {
       if nonActivatedOffset > (activeBlock!.height / 2) {
         let blocksFromActiveBlock = self.blocks(from: activeBlock)
@@ -250,8 +263,9 @@ extension MagneticOrganizer {
           if offset + nextBlock.height > nonActivatedOffset {
             let distanceToCurrentBlock = nonActivatedOffset - offset
             let distanceToNextBlock = (offset + block.height) - nonActivatedOffset
-            
+            print("Here")
             if distanceToNextBlock < distanceToCurrentBlock {
+              print(distanceToNextBlock)
               self.scrollTo(block: nextBlock)
               break
             }

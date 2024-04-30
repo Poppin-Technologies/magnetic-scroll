@@ -75,16 +75,11 @@ public struct Block<Content>: View where Content: View {
       }
     }
     .contentShape(Rectangle())
-    .simultaneousGesture(
-      TapGesture()
-        .onEnded {
-          if configuration.changesActiveBlockOnTapGesture {
-            if configuration.formStyle && !organizer.isScrolling { return }
-            organizer.activeBlock = magneticBlock
-            organizer.scrollTo(block: magneticBlock)
-          }
-        }
-    )
+    .onTapGesture {
+        if organizer.isScrolling { return }
+        organizer.activeBlock = magneticBlock
+        organizer.scrollTo(block: magneticBlock)
+    }
     .animation(.spring(), value: magneticBlock.height)
     .id(id)
     .onAppear {

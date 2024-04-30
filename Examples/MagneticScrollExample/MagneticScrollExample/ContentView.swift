@@ -84,7 +84,8 @@ struct MultipleBlocksView: View {
         }
       }
       .formStyle()
-      .setTimeout(0.20)
+      .velocityThreshold(0.8)
+      .setTimeout(0.39)
       .padding(.horizontal)
       .background(Color.black)
       .preferredColorScheme(.dark)
