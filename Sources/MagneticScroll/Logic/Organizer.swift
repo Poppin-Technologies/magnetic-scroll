@@ -11,7 +11,7 @@ import OrderedCollections
 
 /// MagneticOrganizer to control `Block`s. Supplied by `MagneticScrollView` to all subviews.
 @available(iOS 14.0, *)
-@MainActor public class MagneticOrganizer: ObservableObject {
+@MainActor public class MagneticOrganizer: NSObject, ObservableObject, UIScrollViewDelegate {
   
   // MARK: Wrapped Properties
   
@@ -27,6 +27,8 @@ import OrderedCollections
   @Published var isScrolling = false
   /// Last change date.
   @Published var lastChangeDate: Date = Date.distantFuture
+  /// Whether or not `UIScrollView` is scrolling
+  @Published var uiScrollViewScrolling: Bool = false
   
   var spacing: CGFloat
   /// Anchor that blocks will use
@@ -72,6 +74,8 @@ import OrderedCollections
   internal init(spacing: CGFloat, anchor: UnitPoint) {
     self.spacing = spacing
     self.anchor = anchor
+
+    super.init()
     self.setupPublishers()
   }
   
@@ -158,7 +162,7 @@ import OrderedCollections
         self.lastScrollValues.append(point.y)
       }
       
-      self.scrollIndex = (self.scrollIndex + 1) % 20
+      self.scrollIndex = (self.scrollIndex + 1) % 10
       if configuration?.triggersHapticFeedbackOnBlockChange == true {
         self.triggerHapticFeedbackOnBlockChange()
       }
@@ -186,9 +190,7 @@ import OrderedCollections
           }
           
           let averageDifference = totalDifference / Double(array.count - 1)
-          print("AVG DIFF", averageDifference)
           if abs(averageDifference) <= configuration?.scrollVelocityThreshold ?? 0.9 {
-            print("SCROLLING")
             DispatchQueue.main.async {
               self.scrollToCurrentOffset()
             }
@@ -237,6 +239,7 @@ extension MagneticOrganizer {
 extension MagneticOrganizer {
   public func scrollToCurrentOffset() {
     guard blocks.count > 0 else { return }
+    guard !uiScrollViewScrolling else { return }
     
     if activeBlock == nil {
       activeBlock = blocks[0]
@@ -246,7 +249,6 @@ extension MagneticOrganizer {
     
     let nonActivatedOffset = (scrollViewOffset.y - offsetUntilActiveBlock)
     
-    print("OFFSEEET \(nonActivatedOffset)")
     if nonActivatedOffset > 0 {
       if nonActivatedOffset > (activeBlock!.height / 2) {
         let blocksFromActiveBlock = self.blocks(from: activeBlock)
@@ -263,9 +265,7 @@ extension MagneticOrganizer {
           if offset + nextBlock.height > nonActivatedOffset {
             let distanceToCurrentBlock = nonActivatedOffset - offset
             let distanceToNextBlock = (offset + block.height) - nonActivatedOffset
-            print("Here")
             if distanceToNextBlock < distanceToCurrentBlock {
-              print(distanceToNextBlock)
               self.scrollTo(block: nextBlock)
               break
             }
@@ -372,5 +372,14 @@ extension MagneticOrganizer {
     guard let block = block else { return [] }
     guard let indexOfBlock = blocks.firstIndex(of: block), indexOfBlock != 0 else { return [] }
     return Array(blocks.prefix(upTo: indexOfBlock))
+  }
+}
+
+extension MagneticOrganizer {
+  public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    uiScrollViewScrolling = true
+  }
+  public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    uiScrollViewScrolling = false
   }
 }
